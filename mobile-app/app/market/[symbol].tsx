@@ -7,6 +7,7 @@ import { PriceChart } from '@/components/price-chart';
 import { PocketButton } from '@/components/pocket-button';
 import { Chip } from '@/components/chip';
 import { AssetBadge } from '@/components/market-row';
+import { SmartMoneyCard } from '@/components/smart-money-card';
 import { Text } from '@/components/ui/text';
 import { formatPct, formatPrice } from '@/lib/format';
 import { TIMEFRAMES, type Timeframe } from '@/lib/perpl/market-data';
@@ -98,6 +99,8 @@ export default function MarketScreen() {
           <Chip key={t} label={t} selected={tf === t} onPress={() => setTf(t)} />
         ))}
       </View>
+
+      <SmartMoneyCard symbol={market.symbol} />
 
       {market.symbol === 'MON' && (
         <Pressable
