@@ -1,6 +1,23 @@
-# Pocket
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="mobile-app/assets/brand/pocket-wordmark-dark.png" />
+    <img src="mobile-app/assets/brand/pocket-wordmark-light.png" alt="Pocket — a coin tucked into a stitched pocket" width="320" />
+  </picture>
+</p>
 
-**Trade in dollars. Decide how much to risk.**
+<h1 align="center">Your money. Your risk. Your Pocket.</h1>
+
+<p align="center">
+  Trade in dollars. Decide how much to risk.<br />
+  <strong>Monad Metropolis · Onchain Finance &amp; Trading</strong>
+</p>
+
+<p align="center">
+  <a href="#try-the-demo">Try the demo</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#built-on-monad">The stack</a> ·
+  <a href="#run-the-mobile-app">Run locally</a>
+</p>
 
 Pocket is a mobile trading app built on Monad. Instead of starting with a leverage
 slider, you choose a dollar risk budget and a trading style: **Calm 2×**, **Bold 5×**,
@@ -10,6 +27,25 @@ and fees before you hold to trade.
 Accounts use Mera passkeys, balances use Agora's AUSD, and live orders connect to
 Perpl. Pocket's account layer keeps signing keys on the device, without a custody
 backend.
+
+![An illustrated Pocket walkthrough: choose a direction, set a dollar risk budget, and follow the trade.](docs/images/pocket-walkthrough.svg)
+
+_Illustrated Demo walkthrough. The example uses a $100,000 BTC entry,
+$5 risk at 5×, and 4% maintenance margin; estimated auto-close is $84,000. Fees are separate._
+
+## Why Pocket?
+
+Trading apps often lead with charts, leverage, and margin terminology. Pocket starts
+with a question people already understand: **“How much am I willing to risk?”**
+
+The answer becomes a dollar budget, a position size, and an estimated auto-close
+price. You see those numbers together before making a decision.
+
+## How it works
+
+| Choose                                | Understand                                                       | Act                                                                   |
+| ------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Pick a market and **Up** or **Down**. | Set your dollar risk and choose **Calm**, **Bold**, or **Wild**. | Review the estimate, hold to trade, then track or close the position. |
 
 ## What you can do
 
@@ -22,6 +58,17 @@ backend.
 
 The interface follows the device's light or dark theme, with Inter typography and
 Pocket's mint, coral, amber, and violet accents.
+
+## Try the demo
+
+Choose **Try Demo with $1,000** on Welcome, then:
+
+1. Open **BTC**, choose **Up**, and select **$5 · Bold 5×**.
+2. Read the auto-close sentence and open **Details** to inspect the risk math.
+3. Hold to open, watch the risk meter, close the trade, and check the receipt in **Activity**.
+
+The You tab lets you reset the demo and switch modes. Prices are live; Demo funds
+and execution are simulated.
 
 ## Demo and Live
 
@@ -38,6 +85,20 @@ minimums, fees, and a collateral buffer. A recorded mainnet probe found a **10 A
 minimum opening/deposit** and a **0.01 AUSD minimum withdrawal**; current values are
 read from Perpl. Exact loss-limit behavior still needs verification with real fills,
 funding, and withdrawals.
+
+## Built on Monad
+
+![Pocket architecture: passkey and signing session on your phone; AUSD balances and Perpl execution on Monad.](docs/images/pocket-architecture.svg)
+
+| Integration      | What it does                                                                 |
+| ---------------- | ---------------------------------------------------------------------------- |
+| **Mera**         | Turns a passkey into a standard EVM account and an expiring signing session. |
+| **AUSD · Agora** | Provides the dollar-denominated wallet balance and exchange collateral.      |
+| **Perpl**        | Supplies market data and the on-chain perpetuals exchange.                   |
+| **Monad · viem** | Connects the app to chain 143 for balance reads and signed transactions.     |
+
+The native app calls Perpl and Monad directly. Signing happens on the device;
+there is no custody server between the user and their wallet.
 
 ## Project structure
 
