@@ -4,6 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import Feather from '@expo/vector-icons/Feather';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Text } from '@/components/ui/text';
+import { colors } from '@/theme/brand';
 
 const BAR_PADDING = 6;
 const SPRING = { damping: 18, stiffness: 220, mass: 0.8 };
@@ -36,7 +37,7 @@ export function FloatingTabBar({ state, descriptors, navigation, insets }: Botto
       style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
       <View
         onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}
-        className="w-[64%] flex-row rounded-full bg-[#0A0A0A]"
+        className="w-[64%] flex-row rounded-full border border-pocket-border bg-pocket-surface"
         style={{
           padding: BAR_PADDING,
           shadowColor: '#000',
@@ -47,7 +48,7 @@ export function FloatingTabBar({ state, descriptors, navigation, insets }: Botto
         }}>
         {tabWidth > 0 && (
           <Animated.View
-            className="absolute rounded-full bg-white"
+            className="absolute rounded-full bg-pocket-mint"
             style={[
               { top: BAR_PADDING, bottom: BAR_PADDING, left: BAR_PADDING, width: tabWidth },
               indicatorStyle,
@@ -119,9 +120,9 @@ function TabButton({
       <Animated.View
         className="flex-row items-center justify-center gap-2 py-3"
         style={animatedStyle}>
-        <Feather name={icon} size={18} color={focused ? '#0A0A0A' : '#8A8A8A'} />
+        <Feather name={icon} size={18} color={focused ? colors.ink : colors.muted} />
         <Text
-          className={`font-geist-medium text-sm ${focused ? 'text-[#0A0A0A]' : 'text-[#8A8A8A]'}`}>
+          className={`font-inter-medium text-sm ${focused ? 'text-pocket-ink' : 'text-pocket-muted'}`}>
           {label}
         </Text>
       </Animated.View>

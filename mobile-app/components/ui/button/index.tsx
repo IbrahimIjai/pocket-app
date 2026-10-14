@@ -37,7 +37,7 @@ cssInterop(PrimitiveIcon, {
 });
 
 const buttonStyle = tva({
-  base: 'group/button rounded bg-primary-500 flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2',
+  base: 'group/button rounded-full bg-primary-500 flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2',
   variants: {
     action: {
       primary:
@@ -115,7 +115,7 @@ const buttonStyle = tva({
 });
 
 const buttonTextStyle = tva({
-  base: 'text-typography-0 font-semibold web:select-none',
+  base: 'text-pocket-ink font-inter-semibold web:select-none',
   parentVariants: {
     action: {
       primary:
@@ -129,8 +129,7 @@ const buttonTextStyle = tva({
     variant: {
       link: 'data-[hover=true]:underline data-[active=true]:underline',
       outline: '',
-      solid:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      solid: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     size: {
       xs: 'text-xs',
@@ -144,8 +143,7 @@ const buttonTextStyle = tva({
     {
       variant: 'solid',
       action: 'primary',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     {
       variant: 'solid',
@@ -156,14 +154,12 @@ const buttonTextStyle = tva({
     {
       variant: 'solid',
       action: 'positive',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     {
       variant: 'solid',
       action: 'negative',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     {
       variant: 'outline',
@@ -198,8 +194,7 @@ const buttonIconStyle = tva({
     variant: {
       link: 'data-[hover=true]:underline data-[active=true]:underline',
       outline: '',
-      solid:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      solid: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     size: {
       xs: 'h-3.5 w-3.5',
@@ -223,8 +218,7 @@ const buttonIconStyle = tva({
     {
       variant: 'solid',
       action: 'primary',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     {
       variant: 'solid',
@@ -235,14 +229,12 @@ const buttonIconStyle = tva({
     {
       variant: 'solid',
       action: 'positive',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
     {
       variant: 'solid',
       action: 'negative',
-      class:
-        'text-typography-0 data-[hover=true]:text-typography-0 data-[active=true]:text-typography-0',
+      class: 'text-pocket-ink data-[hover=true]:text-pocket-ink data-[active=true]:text-pocket-ink',
     },
   ],
 });

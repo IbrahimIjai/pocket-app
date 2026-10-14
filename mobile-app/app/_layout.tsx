@@ -1,18 +1,18 @@
-import { Stack } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { colors } from '@/theme/brand';
 import { useFonts } from 'expo-font';
 import * as Splash from 'expo-splash-screen';
 import { useEffect } from 'react';
 import {
-  Geist_400Regular,
-  Geist_500Medium,
-  Geist_600SemiBold,
-  Geist_700Bold,
-} from '@expo-google-fonts/geist';
-import { GeistMono_400Regular } from '@expo-google-fonts/geist-mono';
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 
 import '../global.css';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -24,11 +24,10 @@ Splash.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Geist_400Regular,
-    Geist_500Medium,
-    Geist_600SemiBold,
-    Geist_700Bold,
-    GeistMono_400Regular,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   useEffect(() => {
@@ -45,14 +44,32 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <GluestackUIProvider mode={(colorScheme ?? 'light') as 'light' | 'dark'}>
-      <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" />
-      </Stack>
+    <GluestackUIProvider mode="dark">
+      <StatusBar style="light" />
+      <ThemeProvider
+        value={{
+          ...DarkTheme,
+          colors: {
+            ...DarkTheme.colors,
+            primary: colors.mint,
+            background: colors.ink,
+            card: colors.surface,
+            text: colors.paper,
+            border: colors.border,
+            notification: colors.coral,
+          },
+        }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'fade',
+            contentStyle: { backgroundColor: colors.ink },
+          }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </ThemeProvider>
     </GluestackUIProvider>
   );
 }

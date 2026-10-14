@@ -13,7 +13,8 @@
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleDebug"
-      }
+      },
+      "environment": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -22,7 +23,8 @@
       },
       "android": {
         "buildType": "apk"
-      }
+      },
+      "environment": "preview"
     },
     "production": {
       "autoIncrement": true,
@@ -31,7 +33,8 @@
       },
       "android": {
         "buildType": "apk"
-      }
+      },
+      "environment": "production"
     }
   }
 }

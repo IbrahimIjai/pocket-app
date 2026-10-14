@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { StatusBar, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 const SPLASH_DURATION_MS = 1200;
 
-// Blank splash — swap in branding here later.
+// Match the native splash while the app loads.
 export default function SplashRoute() {
   const router = useRouter();
 
@@ -14,8 +14,13 @@ export default function SplashRoute() {
   }, [router]);
 
   return (
-    <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <View className="flex-1 items-center justify-center bg-pocket-ink">
+      <Image
+        source={require('../assets/splash-icon.png')}
+        accessibilityLabel="Pocket"
+        resizeMode="contain"
+        style={{ width: 200, height: 200 }}
+      />
     </View>
   );
 }

@@ -13,8 +13,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo-google-fonts/geist": "^0.4.1",
-    "@expo-google-fonts/geist-mono": "^0.4.1",
+    "@expo-google-fonts/inter": "^0.4.2",
     "@expo/vector-icons": "^15.0.2",
     "@gluestack-ui/core": "^3.0.19",
     "@gluestack-ui/overlay": "^0.1.22",
