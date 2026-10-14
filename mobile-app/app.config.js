@@ -2,6 +2,11 @@ const { colors } = require('./theme/brand');
 
 const variant = process.env.APP_VARIANT ?? 'production';
 
+const rpId = (process.env.EXPO_PUBLIC_RP_ID ?? '').trim().toLowerCase();
+if (rpId && !/^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(rpId)) {
+  throw new Error('EXPO_PUBLIC_RP_ID must be a domain without a scheme, port, or path.');
+}
+
 const IS_DEV = variant === 'development';
 const IS_PREVIEW = variant === 'preview';
 
@@ -23,6 +28,10 @@ module.exports = {
   },
   plugins: [
     'expo-font',
+    [
+      'expo-secure-store',
+      { faceIDPermission: 'Allow Pocket to verify your identity when you unlock your account.' },
+    ],
     'expo-router',
     'expo-system-ui',
     [
@@ -44,6 +53,7 @@ module.exports = {
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
+    associatedDomains: rpId ? ['webcredentials:' + rpId] : [],
     bundleIdentifier: appPackage,
   },
   android: {
@@ -65,5 +75,6 @@ module.exports = {
   },
   extra: {
     variant,
+    rpId,
   },
 };

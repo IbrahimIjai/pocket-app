@@ -1,0 +1,9 @@
+{
+  "rpId": "your-permanent-host.example.com",
+  "android": [
+    { "packageName": "com.pocket.dev", "sha256Fingerprints": [] },
+    { "packageName": "com.pocket.preview", "sha256Fingerprints": [] },
+    { "packageName": "com.pocket.app", "sha256Fingerprints": [] }
+  ],
+  "appleTeamId": ""
+}
