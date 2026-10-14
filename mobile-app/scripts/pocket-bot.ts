@@ -5,10 +5,15 @@
  * price, and closes automatically on take-profit, stop-loss or a time limit. Then it withdraws
  * free collateral back to the wallet and prints every MonadVision link.
  *
- * Key: put POCKET_BOT_KEY=0x… in mobile-app/.env.local (gitignored; Bun loads it automatically).
+ * Two modes, like the app:
+ *   Demo (default) — paper trades on LIVE Perpl prices: same sizing, 0.05% slippage, real taker
+ *                    fees, auto-close at the max-loss price. No wallet, nothing sent on chain.
+ *   Live (--live)  — real trades on Perpl from POCKET_BOT_KEY (put it in mobile-app/.env.local,
+ *                    which is gitignored; Bun loads it automatically).
  *
- *   bun run scripts/pocket-bot.ts                     # dry run: prints the plan, sends nothing
- *   bun run scripts/pocket-bot.ts --live              # real trades
+ *   bun run bot                                       # demo trade on live prices
+ *   bun run bot --dry                                 # just print the plan
+ *   bun run bot --live                                # real trades
  *   bun run scripts/pocket-bot.ts --live --symbol BTC --side long --risk 5 --k 2 \
  *     --tp 0.5 --sl 2 --hold 90 --rounds 1
  */
@@ -78,13 +83,16 @@ async function main() {
     `Needs ≈ ${formatUsd(requiredCollateralUsd(RISK, K, market))} free on Perpl (min deposit $10)`
   );
 
-  const key = process.env.POCKET_BOT_KEY;
-  if (!LIVE || !key) {
-    log(
-      LIVE ? 'POCKET_BOT_KEY is not set (mobile-app/.env.local).' : 'Dry run — add --live to trade.'
-    );
+  if (flag('dry')) {
+    log('Dry run — nothing traded.');
     return;
   }
+  if (!LIVE) {
+    await runDemo();
+    return;
+  }
+  const key = process.env.POCKET_BOT_KEY;
+  if (!key) throw new Error('POCKET_BOT_KEY is not set (mobile-app/.env.local).');
   if (!/^0x[0-9a-fA-F]{64}$/.test(key))
     throw new Error('POCKET_BOT_KEY must be a 0x-prefixed 32-byte hex key');
 
@@ -153,6 +161,67 @@ async function main() {
 
   log('Done. On-chain activity:');
   for (const h of txs) console.log('  ', EXPLORER_TX(h));
+}
+
+const DEMO_START_USD = 1000;
+const DEMO_SLIPPAGE = 0.0005; // same as the app's Demo mode (lib/demo.tsx)
+
+/** Paper trading on live Perpl prices with the app's Demo rules. Nothing is sent on chain. */
+async function runDemo() {
+  log('DEMO mode — live Perpl prices, play money, nothing sent on chain.');
+  let balance = DEMO_START_USD;
+  for (let round = 1; round <= ROUNDS; round++) {
+    const m0 = await liveMarket();
+    const entry = m0.price * (SIDE === 'long' ? 1 + DEMO_SLIPPAGE : 1 - DEMO_SLIPPAGE);
+    const t = sizeTrade({
+      riskUsd: RISK,
+      k: K,
+      markPrice: entry,
+      side: SIDE,
+      mmr: m0.mmr,
+      takerFeeRate: m0.takerFeeRate,
+    });
+    balance -= RISK + t.openFee;
+    log(
+      `— Round ${round}/${ROUNDS}: opened at ${formatPrice(entry)} · fee ${formatUsd(t.openFee)}`
+    );
+    log(`  auto-close at ${formatPrice(t.autoClosePrice)} (max loss ${formatUsd(RISK)})`);
+
+    const started = Date.now();
+    let reason = 'time limit';
+    let exit = entry;
+    while (Date.now() - started < HOLD_S * 1000) {
+      await sleep(POLL_MS);
+      const m = await liveMarket();
+      exit = m.price;
+      const hit = SIDE === 'long' ? m.price <= t.autoClosePrice : m.price >= t.autoClosePrice;
+      if (hit) {
+        reason = 'auto-close';
+        exit = t.autoClosePrice;
+        break;
+      }
+      const pnl = pnlUsd({ entry, mark: m.price, size: t.size, side: SIDE });
+      log(`  mark ${formatPrice(m.price)} · P&L ${formatUsd(pnl, { sign: true })}`);
+      if (pnl >= TP_USD) {
+        reason = 'take profit';
+        break;
+      }
+      if (pnl <= -SL_USD) {
+        reason = 'stop loss';
+        break;
+      }
+    }
+
+    const gross = Math.max(pnlUsd({ entry, mark: exit, size: t.size, side: SIDE }), -RISK);
+    const closeFee = reason === 'auto-close' ? 0 : t.size * exit * m0.takerFeeRate;
+    const returned = Math.max(RISK + gross - closeFee, 0);
+    balance += returned;
+    const net = returned - RISK - t.openFee;
+    log(
+      `  closed (${reason}) at ${formatPrice(exit)} · result ${formatUsd(net, { sign: true })} after fees`
+    );
+  }
+  log(`Done. Demo balance ${formatUsd(balance)} (started ${formatUsd(DEMO_START_USD)}).`);
 }
 
 main().catch((e) => {
