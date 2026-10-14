@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 import Animated, {
   Easing,
   cancelAnimation,
+  withDelay,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -36,14 +37,17 @@ export function HoldButton({ label, onComplete, variant = 'up', disabled }: Prop
       1,
       { duration: HOLD_MS * (1 - progress.value), easing: Easing.linear },
       (finished) => {
-        if (finished) scheduleOnRN(onComplete);
+        if (finished) {
+          scheduleOnRN(onComplete);
+          // Reset so a retry needs a full hold again.
+          progress.value = withDelay(400, withTiming(0, { duration: 250 }));
+        }
       }
     );
   };
 
   const release = () => {
     setHolding(false);
-    if (progress.value >= 1) return;
     cancelAnimation(progress);
     progress.value = withTiming(0, { duration: 200 });
   };

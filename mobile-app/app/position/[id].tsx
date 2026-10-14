@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Linking, Pressable, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Linking, Pressable, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
@@ -12,6 +12,10 @@ import { EXPLORER_TX, formatPct, formatPrice, shortAddress, timeAgo } from '@/li
 import { positionStats } from '@/lib/positions';
 import { BOLDNESS } from '@/lib/risk';
 import { useDemo } from '@/lib/demo';
+import { useJournal } from '@/lib/journal';
+import { useOptionalSession } from '@/lib/account/session';
+import { closeLiveTrade, TradeError } from '@/lib/perpl/trade';
+import { haptic } from '@/lib/haptics';
 import type { Trade } from '@/lib/types';
 import { useMarket } from '@/hooks/useMarkets';
 import { usePortfolio } from '@/hooks/usePortfolio';
@@ -34,8 +38,12 @@ export default function LiveTradeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const { positions, trades } = usePortfolio();
+  const { mode, positions, trades } = usePortfolio();
   const demo = useDemo();
+  const journal = useJournal();
+  const session = useOptionalSession();
+  const [closing, setClosing] = useState(false);
+  const [closeError, setCloseError] = useState<string | null>(null);
   const position = positions.find((p) => p.id === id);
   const { market } = useMarket(position?.symbol);
 
@@ -60,9 +68,45 @@ export default function LiveTradeScreen() {
   const boldness = BOLDNESS.find((b) => b.k === position.k)?.label ?? '';
   const sideLabel = position.side === 'long' ? 'Up' : 'Down';
 
-  const close = () => {
-    const trade = demo.close(position.id);
-    if (trade) router.replace({ pathname: '/receipt/[id]', params: receiptParams(trade) });
+  const close = async () => {
+    haptic('confirm');
+    if (mode === 'demo' || position.id.startsWith('demo-')) {
+      const trade = demo.close(position.id);
+      if (trade) router.replace({ pathname: '/receipt/[id]', params: receiptParams(trade) });
+      return;
+    }
+    if (!session?.walletClient || !session.address || !market) return;
+    setClosing(true);
+    setCloseError(null);
+    try {
+      const res = await closeLiveTrade({
+        wallet: session.walletClient,
+        address: session.address,
+        market,
+        onStep: () => session.touch(),
+      });
+      const trade: Trade = {
+        id: position.id,
+        symbol: position.symbol,
+        side: position.side,
+        k: position.k,
+        riskUsd: res.riskUsd,
+        pnlUsd: res.pnlUsd,
+        openedAt: position.openedAt,
+        closedAt: res.at,
+        settleMs: res.settleMs,
+        openTx: position.openTx,
+        closeTx: res.hash,
+      };
+      journal.recordClose(trade);
+      haptic('success');
+      router.replace({ pathname: '/receipt/[id]', params: receiptParams(trade) });
+    } catch (e) {
+      haptic('error');
+      setCloseError(e instanceof TradeError ? e.message : 'Couldn’t close. Try again.');
+    } finally {
+      setClosing(false);
+    }
   };
 
   return (
@@ -70,7 +114,24 @@ export default function LiveTradeScreen() {
       back
       title={`${position.symbol} ${sideLabel} · ${boldness} ${position.k}×`}
       right={<ModeBadge />}
-      footer={<PocketButton variant="secondary" label="Close trade" onPress={close} />}>
+      footer={
+        <View className="gap-2">
+          {closeError && (
+            <Text
+              accessibilityRole="alert"
+              className="text-center font-inter text-sm text-pocket-coral">
+              {closeError}
+            </Text>
+          )}
+          <PocketButton
+            variant="secondary"
+            label={closing ? 'Closing…' : 'Close trade'}
+            disabled={closing}
+            icon={closing ? <ActivityIndicator size="small" color={theme.text} /> : undefined}
+            onPress={() => void close()}
+          />
+        </View>
+      }>
       <View className="mt-6 gap-1">
         <Money value={pnl} sign tone className="font-inter-bold text-6xl leading-[68px]" />
         <Text className="font-inter-medium text-base text-typography-500">

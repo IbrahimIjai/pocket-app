@@ -1,5 +1,5 @@
 // Read-only exchange helpers. Transaction submission stays gated on Phase 5's round trip.
-import { BaseError, ContractFunctionRevertedError, getAddress, type Address } from 'viem';
+import { BaseError, ContractFunctionRevertedError, erc20Abi, getAddress, type Address } from 'viem';
 import { publicClient } from '../chain';
 import { config } from '../config';
 import { ExchangeAbi } from './abi';
@@ -31,4 +31,65 @@ export async function readAccount(address: Address, blockNumber?: bigint) {
 
 export async function getAccountId(address: Address): Promise<bigint | null> {
   return (await readAccount(address))?.accountId ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Live portfolio reads (Phase 4/6).
+
+const AUSD_DECIMALS = 6; // verified 2026-10-14: AUSD and Perpl CNS both 6 dp
+export const cnsToUsd = (cns: bigint) => Number(cns) / 10 ** AUSD_DECIMALS;
+export const usdToCns = (usd: number) => BigInt(Math.round(usd * 10 ** AUSD_DECIMALS));
+
+export async function readWallet(address: Address) {
+  const [ausd, mon] = await Promise.all([
+    publicClient.readContract({
+      address: getAddress(config.ausd),
+      abi: erc20Abi,
+      functionName: 'balanceOf',
+      args: [address],
+    }),
+    publicClient.getBalance({ address }),
+  ]);
+  return { ausd, mon };
+}
+
+export type ChainPosition = {
+  perpId: number;
+  side: 'long' | 'short';
+  depositCNS: bigint;
+  pricePNS: bigint;
+  lotLNS: bigint;
+  pnlCNS: bigint;
+  markPNS: bigint;
+};
+
+/** Open positions for this account across the given markets (lot 0 = no position). */
+export async function readPositions(
+  accountId: bigint,
+  perpIds: number[]
+): Promise<ChainPosition[]> {
+  const results = await Promise.all(
+    perpIds.map((perpId) =>
+      publicClient
+        .readContract({
+          address: getAddress(config.perplExchange),
+          abi: ExchangeAbi,
+          functionName: 'getPosition',
+          args: [BigInt(perpId), accountId],
+        })
+        .then(([p, markPNS]) => ({ perpId, p, markPNS }))
+        .catch(() => null)
+    )
+  );
+  return results
+    .filter((r): r is NonNullable<typeof r> => r !== null && r.p.lotLNS > 0n)
+    .map(({ perpId, p, markPNS }) => ({
+      perpId,
+      side: p.positionType === 0 ? 'long' : 'short',
+      depositCNS: p.depositCNS,
+      pricePNS: p.pricePNS,
+      lotLNS: p.lotLNS,
+      pnlCNS: p.pnlCNS,
+      markPNS,
+    }));
 }

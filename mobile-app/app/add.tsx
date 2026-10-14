@@ -4,7 +4,9 @@ import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
 import { CopyAddress } from '@/components/copy-address';
 import { Text } from '@/components/ui/text';
-import { MOCK_ADDRESS, MOCK_BALANCES } from '@/lib/mock';
+import { UnlockCard } from '@/components/account/unlock-card';
+import { useOptionalSession } from '@/lib/account/session';
+import { useLiveAccount } from '@/hooks/useLiveAccount';
 import { formatUsd } from '@/lib/format';
 import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/theme/brand';
@@ -18,6 +20,20 @@ const OPTIONS: { icon: keyof typeof Feather.glyphMap; label: string; soon?: bool
 // S2 · Add dollars. Phase 4: real address, polls AUSD + MON every 2s, auto-advances when funded.
 export default function AddDollarsScreen() {
   const theme = useTheme();
+  const session = useOptionalSession();
+  const address = session?.status === 'ready' ? session.address : null;
+  const live = useLiveAccount(address);
+  const ausd = live.data?.walletUsd ?? 0;
+  const mon = live.data?.mon ?? 0;
+  const funded = ausd > 0 && mon > 0;
+
+  if (!address) {
+    return (
+      <Screen back title="Add dollars" scroll>
+        <UnlockCard />
+      </Screen>
+    );
+  }
 
   return (
     <Screen back title="Add dollars" scroll>
@@ -26,10 +42,10 @@ export default function AddDollarsScreen() {
       </Text>
       {/* QR always sits on Paper so it scans in both themes. */}
       <View className="mt-3 items-center self-center rounded-3xl bg-pocket-paper p-4">
-        <QRCode value={MOCK_ADDRESS} size={184} color={colors.ink} backgroundColor={colors.paper} />
+        <QRCode value={address} size={184} color={colors.ink} backgroundColor={colors.paper} />
       </View>
       <View className="mt-4">
-        <CopyAddress address={MOCK_ADDRESS} />
+        <CopyAddress address={address} />
       </View>
 
       <Text className="mt-8 font-inter-semibold text-lg text-typography-900">
@@ -54,16 +70,26 @@ export default function AddDollarsScreen() {
       </View>
 
       <View className="mt-6 gap-3 rounded-3xl border border-outline-200 p-4">
-        <BalanceRow label="AUSD (dollars)" value={formatUsd(MOCK_BALANCES.pocketUsd)} />
-        <BalanceRow label="MON (for network fees)" value={`${MOCK_BALANCES.mon} MON`} />
+        <BalanceRow label="AUSD (dollars)" value={formatUsd(ausd)} />
+        <BalanceRow label="MON (for network fees)" value={`${mon.toFixed(4)} MON`} />
         <Text className="font-inter text-xs text-typography-500">
           You need a little MON too — every trade pays a tiny Monad network fee.
         </Text>
       </View>
 
       <View className="mt-6 flex-row items-center justify-center gap-2">
-        <ActivityIndicator size="small" color={theme.brand.mint} />
-        <Text className="font-inter text-sm text-typography-500">Waiting for funds…</Text>
+        {funded ? (
+          <Feather name="check-circle" size={16} color={theme.brand.mint} />
+        ) : (
+          <ActivityIndicator size="small" color={theme.brand.mint} />
+        )}
+        <Text className="font-inter text-sm text-typography-500">
+          {funded
+            ? 'You’re funded — go pick a market.'
+            : ausd > 0
+              ? 'Dollars arrived. Now add a little MON for fees…'
+              : 'Waiting for funds…'}
+        </Text>
       </View>
     </Screen>
   );

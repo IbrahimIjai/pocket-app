@@ -7,11 +7,13 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useState,
   type ReactNode,
 } from 'react';
 import { useMarkets } from '@/hooks/useMarkets';
 import { pnlUsd, sizeTrade, type Multiplier, type Side } from './risk';
 import type { Market, Position, Trade } from './types';
+import { KEYS, loadJson, saveJson } from './persist';
 
 export const DEMO_START_USD = 1000;
 const DEMO_SLIPPAGE = 0.0005; // 0.05% worse than mark, like a real market order
@@ -20,7 +22,8 @@ type State = { balance: number; positions: Position[]; trades: Trade[] };
 type Action =
   | { type: 'open'; position: Position; cost: number }
   | { type: 'close'; id: string; credit: number; trade: Trade }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'hydrate'; state: State };
 
 const initial: State = { balance: DEMO_START_USD, positions: [], trades: [] };
 
@@ -36,6 +39,8 @@ function reducer(s: State, a: Action): State {
       };
     case 'reset':
       return initial;
+    case 'hydrate':
+      return a.state;
   }
 }
 
@@ -74,6 +79,18 @@ const Ctx = createContext<DemoContext | null>(null);
 
 export function DemoProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initial);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Restore the demo account from the last session, then save on every change.
+  useEffect(() => {
+    loadJson<State>(KEYS.demo).then((saved) => {
+      if (saved && typeof saved.balance === 'number') dispatch({ type: 'hydrate', state: saved });
+      setHydrated(true);
+    });
+  }, []);
+  useEffect(() => {
+    if (hydrated) saveJson(KEYS.demo, { ...state, trades: state.trades.slice(0, 100) });
+  }, [hydrated, state]);
   const { markets } = useMarkets();
   const bySymbol = useMemo(() => new Map(markets.map((m) => [m.symbol, m])), [markets]);
 

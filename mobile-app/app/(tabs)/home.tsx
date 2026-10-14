@@ -11,13 +11,31 @@ import { positionStats } from '@/lib/positions';
 import { useMarkets } from '@/hooks/useMarkets';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { useTheme } from '@/hooks/useTheme';
+import { UnlockCard } from '@/components/account/unlock-card';
+import { useOptionalSession } from '@/lib/account/session';
+import { withdrawAll } from '@/lib/perpl/trade';
+import { formatUsd } from '@/lib/format';
+import { useState } from 'react';
 
 // S3 · Home — live prices (Phase 2) + demo/live portfolio.
 export default function HomeScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { markets, isLoading, offline, refetch } = useMarkets();
-  const { mode, balances, positions } = usePortfolio();
+  const { mode, balances, positions, signedIn, readyOnPerplUsd } = usePortfolio();
+  const session = useOptionalSession();
+  const [moving, setMoving] = useState(false);
+  const moveBack = async () => {
+    if (!session?.walletClient || !session.address) return;
+    setMoving(true);
+    try {
+      await withdrawAll({ wallet: session.walletClient, address: session.address });
+    } catch {
+      // Perpl rate-limits withdrawals; the button stays so the user can retry.
+    } finally {
+      setMoving(false);
+    }
+  };
 
   const priced = positions.map((p) => ({
     position: p,
@@ -72,7 +90,22 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {mode === 'live' && (
+      {mode === 'live' && !signedIn && <UnlockCard />}
+
+      {mode === 'live' && signedIn && readyOnPerplUsd >= 0.01 && (
+        <View className="mt-4 flex-row items-center justify-between rounded-2xl border border-outline-200 bg-background-50 px-4 py-3">
+          <Text className="flex-1 font-inter text-sm text-typography-500">
+            {formatUsd(readyOnPerplUsd)} free on Perpl (not at risk)
+          </Text>
+          <Pressable accessibilityRole="button" disabled={moving} onPress={() => void moveBack()}>
+            <Text className="font-inter-semibold text-sm text-pocket-violet">
+              {moving ? 'Moving…' : 'Move to Pocket'}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {mode === 'live' && signedIn && (
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push('/add')}
@@ -82,7 +115,7 @@ export default function HomeScreen() {
         </Pressable>
       )}
 
-      {priced.length === 0 && (
+      {priced.length === 0 && (mode === 'demo' || signedIn) && (
         <View className="mt-8 flex-row items-center gap-3 rounded-3xl border border-outline-200 bg-background-50 p-4">
           <Feather
             name={mode === 'demo' ? 'play-circle' : 'lock'}
@@ -92,7 +125,7 @@ export default function HomeScreen() {
           <Text className="flex-1 font-inter text-sm leading-5 text-typography-500">
             {mode === 'demo'
               ? 'Try it: pick a market below, choose $5 and hold to trade. Demo money, live prices.'
-              : 'Live trading needs your Face ID account and AUSD. Switch to Demo on the You tab to practise.'}
+              : 'Add AUSD and a little MON, then pick a market below.'}
           </Text>
         </View>
       )}
