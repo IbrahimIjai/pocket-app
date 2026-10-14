@@ -231,4 +231,20 @@ export const VIDEOS: Record<string, Video> = {
       "hackathon",
     ],
   },
+  promo: {
+    url: "",
+    title: "Pocket: never lose more than you chose (30s)",
+    description:
+      "Trade in dollars with Face ID on Monad. Pick how much you're willing to lose; Pocket sizes the trade on Perpl and that's the most you can lose.\n\nhttps://pocket-app-web.vercel.app",
+    tags: [
+      "Pocket",
+      "Monad",
+      "Perpl",
+      "AUSD",
+      "Mera",
+      "Face ID",
+      "crypto trading",
+      "DeFi",
+    ],
+  },
 }
