@@ -11,7 +11,8 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web",
-    "probe:perpl": "bun run scripts/perpl-probe.ts"
+    "probe:perpl": "bun run scripts/perpl-probe.ts",
+    "bot": "bun run scripts/pocket-bot.ts"
   },
   "dependencies": {
     "@category-labs/mera": "^0.2.0",
