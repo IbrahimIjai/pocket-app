@@ -3,7 +3,7 @@ import type { Position } from './types';
 
 /** Everything the UI shows about an open trade, given the current mark price. */
 export function positionStats(p: Position, mark: number) {
-  // Losses can't exceed what's at risk — the position auto-closes there.
+  // Losses can't exceed what's at risk: the position auto-closes there.
   const pnl = Math.max(
     pnlUsd({ entry: p.entryPrice, mark, size: p.size, side: p.side }),
     -p.riskUsd

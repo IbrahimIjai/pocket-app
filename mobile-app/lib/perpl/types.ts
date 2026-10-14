@@ -1,5 +1,5 @@
 // Perpl public API shapes (subset). Source: github.com/PerplFoundation/api-docs types.md.
-// Screens never import these — map to lib/types.ts via lib/perpl/market-data.ts.
+// Screens never import these: map to lib/types.ts via lib/perpl/market-data.ts.
 
 export type BlockTimestamp = { b?: number; t?: number };
 
@@ -39,7 +39,7 @@ export type FundingEvent = { at: BlockTimestamp; rate: number };
 export type PerplMarket = {
   id: number;
   perpetual_id: number;
-  symbol: string; // sometimes empty — use size_units
+  symbol: string; // sometimes empty: use size_units
   name: string;
   size_units: string;
   funding_interval_sec: number;

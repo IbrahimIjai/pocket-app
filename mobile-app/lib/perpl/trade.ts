@@ -62,7 +62,7 @@ function friendly(error: unknown): string {
     return 'Not enough AUSD in your Pocket for this trade.';
   if (/ExceedsMaxNegPnlCollat|slippage/i.test(msg)) return 'The price moved too fast. Try again.';
   if (/SESSION_ENDED/i.test(msg)) return 'Your session ended. Unlock your Pocket again.';
-  return 'The trade didn’t go through. Your money is safe — try again.';
+  return 'The trade didn’t go through. Your money is safe. Try again.';
 }
 
 async function instanceMinimums() {
@@ -189,7 +189,7 @@ export async function openLiveTrade(p: {
   const acct = await readAccount(address);
   const [position] = acct ? await readPositions(acct.accountId, [market.marketId]) : [];
   if (!position)
-    throw new TradeError('The order didn’t fill. Nothing was traded — try again.', 'ordering');
+    throw new TradeError('The order didn’t fill. Nothing was traded. Try again.', 'ordering');
   return { hash, position, settleMs: Date.now() - started, at: Date.now() };
 }
 

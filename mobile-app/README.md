@@ -1,8 +1,8 @@
 # Pocket
 
-**Trade in dollars with Face ID — and never lose more than you chose.**
+**Trade in dollars with Face ID: and never lose more than you chose.**
 
-Pocket asks two questions instead of "what leverage?": *how much are you willing to lose* and *how bold*. It sizes a perpetuals trade on [Perpl](https://app.perpl.xyz) (Monad), shows the exact auto-close price in plain English, and moves only the amount at risk out of your wallet.
+Pocket asks two questions instead of "what leverage?": _how much are you willing to lose_ and _how bold_. It sizes a perpetuals trade on [Perpl](https://app.perpl.xyz) (Monad), shows the exact auto-close price in plain English, and moves only the amount at risk out of your wallet.
 
 - **Account:** passkey (Face ID / fingerprint) via [Mera](https://github.com/category-labs/mera). No seed phrase, no custody backend.
 - **Dollars:** AUSD on Monad (chain 143).
@@ -27,14 +27,14 @@ Passkeys are bound to the rpId `pocket-app-web.vercel.app`, which serves `/.well
 
 ## Layout
 
-| Path | What |
-|---|---|
-| `app/` | Screens (expo-router): welcome, tabs (home, activity, you), market, trade ticket, live trade, receipt, add dollars |
-| `lib/risk.ts` | "Max loss first" sizing, auto-close price, risk meter (unit-tested) |
-| `lib/perpl/` | Perpl REST client, units, ABI, chain reads, live trade execution |
-| `lib/account/` | Mera passkey → BIP-44 wallet, in-memory signing session with idle/background expiry |
-| `lib/demo.tsx`, `lib/mode.tsx`, `lib/journal.tsx` | Demo engine, Demo/Live mode, live trade journal (persisted) |
-| `hooks/usePortfolio.ts` | Single source of balances / positions / history for the current mode |
+| Path                                              | What                                                                                                               |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `app/`                                            | Screens (expo-router): welcome, tabs (home, activity, you), market, trade ticket, live trade, receipt, add dollars |
+| `lib/risk.ts`                                     | "Max loss first" sizing, auto-close price, risk meter (unit-tested)                                                |
+| `lib/perpl/`                                      | Perpl REST client, units, ABI, chain reads, live trade execution                                                   |
+| `lib/account/`                                    | Mera passkey → BIP-44 wallet, in-memory signing session with idle/background expiry                                |
+| `lib/demo.tsx`, `lib/mode.tsx`, `lib/journal.tsx` | Demo engine, Demo/Live mode, live trade journal (persisted)                                                        |
+| `hooks/usePortfolio.ts`                           | Single source of balances / positions / history for the current mode                                               |
 
 ## Checks
 

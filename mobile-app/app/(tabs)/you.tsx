@@ -107,7 +107,7 @@ export default function YouScreen() {
           </>
         ) : (
           <Text className="font-inter text-sm text-typography-500">
-            {mode === 'demo' ? 'Demo account — no wallet needed' : 'Not unlocked'}
+            {mode === 'demo' ? 'Demo account: no wallet needed' : 'Not unlocked'}
           </Text>
         )}
       </View>

@@ -73,7 +73,7 @@ export default function AddDollarsScreen() {
         <BalanceRow label="AUSD (dollars)" value={formatUsd(ausd)} />
         <BalanceRow label="MON (for network fees)" value={`${mon.toFixed(4)} MON`} />
         <Text className="font-inter text-xs text-typography-500">
-          You need a little MON too — every trade pays a tiny Monad network fee.
+          You need a little MON too. Every trade pays a tiny Monad network fee.
         </Text>
       </View>
 
@@ -85,7 +85,7 @@ export default function AddDollarsScreen() {
         )}
         <Text className="font-inter text-sm text-typography-500">
           {funded
-            ? 'You’re funded — go pick a market.'
+            ? 'You’re funded. Go pick a market.'
             : ausd > 0
               ? 'Dollars arrived. Now add a little MON for fees…'
               : 'Waiting for funds…'}

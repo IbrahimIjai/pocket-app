@@ -1,4 +1,4 @@
-// Runtime config. EXPO_PUBLIC_* vars are inlined at bundle time — must be read as
+// Runtime config. EXPO_PUBLIC_* vars are inlined at bundle time: must be read as
 // literal `process.env.EXPO_PUBLIC_X` expressions (no dynamic access).
 
 export const config = {

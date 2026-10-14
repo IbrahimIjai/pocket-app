@@ -13,13 +13,13 @@ const PACES = [
 
 export function meta() {
   return [
-    { title: "Pocket — Trade on your terms." },
+    { title: "Pocket: Trade on your terms." },
     {
       name: "description",
       content:
         "Trade in dollars with a risk budget you choose. Pocket brings passkey accounts, AUSD, and simple trading to Monad.",
     },
-    { property: "og:title", content: "Pocket — Trade on your terms." },
+    { property: "og:title", content: "Pocket: Trade on your terms." },
     {
       property: "og:description",
       content: "Your wallet. Your risk. Your Pocket.",

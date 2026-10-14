@@ -11,7 +11,7 @@ const LEVEL: Record<RiskLevel, { bar: string; text: string; label: string }> = {
 };
 
 type Props = {
-  fractionLeft: number; // 0..1 — distance left before auto-close
+  fractionLeft: number; // 0..1: distance left before auto-close
   level: RiskLevel;
   size?: 'sm' | 'lg';
   showLabel?: boolean;

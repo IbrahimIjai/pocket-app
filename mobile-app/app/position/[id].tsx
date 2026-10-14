@@ -33,7 +33,7 @@ function receiptParams(t: Trade) {
   };
 }
 
-// S6 · Live trade — live mark price; demo positions settle locally, live ones on Perpl (Phase 6).
+// S6 · Live trade: live mark price; demo positions settle locally, live ones on Perpl (Phase 6).
 export default function LiveTradeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();

@@ -33,7 +33,7 @@ const STEP_LABEL: Record<TradeStep, string> = {
   withdrawing: 'Moving dollars back to your Pocket…',
 };
 
-// S5 · Trade ticket — the heart of the app. Copy rule (POCKET.md §2): the auto-close price
+// S5 · Trade ticket: the heart of the app. Copy rule (POCKET.md §2): the auto-close price
 // and the dollar loss always share one sentence, and "liquidation" only appears in Details.
 export default function TradeTicketScreen() {
   const params = useLocalSearchParams<{ symbol: string; side?: Side }>();
@@ -245,7 +245,7 @@ export default function TradeTicketScreen() {
         ) : (
           <Text className="font-inter text-base text-typography-500">
             {!signedIn && mode === 'live'
-              ? 'Unlock your Pocket with Face ID on Home to trade live — or switch to Demo on the You tab.'
+              ? 'Unlock your Pocket with Face ID on Home to trade live, or switch to Demo on the You tab.'
               : !canTrade
                 ? 'Loading your account…'
                 : needsGas
@@ -253,8 +253,8 @@ export default function TradeTicketScreen() {
                   : riskUsd < 1
                     ? 'Enter at least $1 to see your trade.'
                     : mode === 'live'
-                      ? `This needs ${formatUsd(liveToMove)} in your Pocket (Perpl’s $10 minimum) — you have ${formatUsd(balances.pocketUsd)}.`
-                      : `Not enough in your Pocket — you have ${formatUsd(balances.pocketUsd)}.`}
+                      ? `This needs ${formatUsd(liveToMove)} in your Pocket (Perpl’s $10 minimum): you have ${formatUsd(balances.pocketUsd)}.`
+                      : `Not enough in your Pocket. You have ${formatUsd(balances.pocketUsd)}.`}
           </Text>
         )}
       </View>

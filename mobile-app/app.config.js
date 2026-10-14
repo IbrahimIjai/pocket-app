@@ -63,7 +63,7 @@ module.exports = {
       backgroundColor: colors.ink,
     },
     package: appPackage,
-    // arm64-v8a only — cuts APK size ~60% vs universal. Covers all modern Android (2017+).
+    // arm64-v8a only: cuts APK size ~60% vs universal. Covers all modern Android (2017+).
     supportedCpuArchitectures: IS_DEV ? undefined : ['arm64-v8a'],
   },
   web: {

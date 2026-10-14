@@ -17,7 +17,7 @@ import { withdrawAll } from '@/lib/perpl/trade';
 import { formatUsd } from '@/lib/format';
 import { useState } from 'react';
 
-// S3 · Home — live prices (Phase 2) + demo/live portfolio.
+// S3 · Home: live prices (Phase 2) + demo/live portfolio.
 export default function HomeScreen() {
   const router = useRouter();
   const theme = useTheme();

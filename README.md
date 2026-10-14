@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="mobile-app/assets/brand/pocket-wordmark-dark.png" />
-    <img src="mobile-app/assets/brand/pocket-wordmark-light.png" alt="Pocket — a coin tucked into a stitched pocket" width="320" />
+    <img src="mobile-app/assets/brand/pocket-wordmark-light.png" alt="Pocket, a coin tucked into a stitched pocket" width="320" />
   </picture>
 </p>
 

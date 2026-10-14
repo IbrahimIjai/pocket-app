@@ -28,7 +28,7 @@ export default function Video({ loaderData }: Route.ComponentProps) {
         </a>
         <h1 className="text-2xl font-semibold">{title}</h1>
         <p className="text-[#9AA0AA]">
-          The video is being uploaded — check back in a few minutes.
+          The video is being uploaded. Check back in a few minutes.
         </p>
         <section className="space-y-2">
           <h2 className="text-sm font-semibold tracking-wide text-[#9AA0AA] uppercase">

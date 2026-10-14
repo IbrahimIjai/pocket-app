@@ -16,7 +16,7 @@ import { useTheme } from '@/hooks/useTheme';
 
 const CHART_HEIGHT = 220;
 
-// S4 · Market — live mark price + Perpl candles.
+// S4 · Market: live mark price + Perpl candles.
 export default function MarketScreen() {
   const { symbol = 'BTC' } = useLocalSearchParams<{ symbol: string }>();
   const router = useRouter();

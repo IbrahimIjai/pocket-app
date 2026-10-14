@@ -1,7 +1,7 @@
 import type { Route } from "./+types/dashboard"
 
 export function meta(_: Route.MetaArgs) {
-  return [{ title: "Pocket Risk — Perpl dashboard" }]
+  return [{ title: "Pocket Risk: Perpl dashboard" }]
 }
 
 // Placeholder for the Perpl Risk Tool bounty dashboard (pocket_drafts/bounties_impl.md §4).

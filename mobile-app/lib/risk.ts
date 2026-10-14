@@ -1,4 +1,4 @@
-// Risk engine — "max loss first". See pocket_drafts/POCKET.md §2.
+// Risk engine: "max loss first". See pocket_drafts/POCKET.md §2.
 // Pure functions only: no React, no network, so it can be unit-tested with `bun test`.
 
 export type Multiplier = 2 | 5 | 10;
@@ -14,7 +14,7 @@ export const BOLDNESS: { k: Multiplier; label: string }[] = [
 export const RISK_PRESETS_USD = [5, 10, 25] as const;
 
 export function sizeTrade(p: {
-  riskUsd: number; // L — the most the user can lose
+  riskUsd: number; // L: the most the user can lose
   k: Multiplier;
   markPrice: number;
   side: Side;

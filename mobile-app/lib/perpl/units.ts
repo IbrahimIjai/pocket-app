@@ -1,4 +1,4 @@
-// Perpl scaled-integer conversions. Decimals always come from the market config — no defaults.
+// Perpl scaled-integer conversions. Decimals always come from the market config: no defaults.
 
 export const scalePrice = (scaled: number, priceDecimals: number) => scaled / 10 ** priceDecimals;
 

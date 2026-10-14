@@ -1,14 +1,14 @@
 /**
- * Pocket Bot — "max loss first" automation on Perpl (Monad mainnet).
+ * Pocket Bot: "max loss first" automation on Perpl (Monad mainnet).
  *
  * Opens a trade sized by the user's maximum loss (lib/risk.ts), watches the live Perpl mark
  * price, and closes automatically on take-profit, stop-loss or a time limit. Then it withdraws
  * free collateral back to the wallet and prints every MonadVision link.
  *
  * Two modes, like the app:
- *   Demo (default) — paper trades on LIVE Perpl prices: same sizing, 0.05% slippage, real taker
+ *   Demo (default): paper trades on LIVE Perpl prices: same sizing, 0.05% slippage, real taker
  *                    fees, auto-close at the max-loss price. No wallet, nothing sent on chain.
- *   Live (--live)  — real trades on Perpl from POCKET_BOT_KEY (put it in mobile-app/.env.local,
+ *   Live (--live) : real trades on Perpl from POCKET_BOT_KEY (put it in mobile-app/.env.local,
  *                    which is gitignored; Bun loads it automatically).
  *
  *   bun run bot                                       # demo trade on live prices
@@ -84,7 +84,7 @@ async function main() {
   );
 
   if (flag('dry')) {
-    log('Dry run — nothing traded.');
+    log('Dry run. Nothing traded.');
     return;
   }
   if (!LIVE) {
@@ -107,7 +107,7 @@ async function main() {
 
   const txs: string[] = [];
   for (let round = 1; round <= ROUNDS; round++) {
-    log(`— Round ${round}/${ROUNDS}: opening`);
+    log(`Round ${round}/${ROUNDS}: opening`);
     const opened = await openLiveTrade({
       wallet,
       address,
@@ -168,7 +168,7 @@ const DEMO_SLIPPAGE = 0.0005; // same as the app's Demo mode (lib/demo.tsx)
 
 /** Paper trading on live Perpl prices with the app's Demo rules. Nothing is sent on chain. */
 async function runDemo() {
-  log('DEMO mode — live Perpl prices, play money, nothing sent on chain.');
+  log('DEMO mode: live Perpl prices, play money, nothing sent on chain.');
   let balance = DEMO_START_USD;
   for (let round = 1; round <= ROUNDS; round++) {
     const m0 = await liveMarket();
@@ -182,9 +182,7 @@ async function runDemo() {
       takerFeeRate: m0.takerFeeRate,
     });
     balance -= RISK + t.openFee;
-    log(
-      `— Round ${round}/${ROUNDS}: opened at ${formatPrice(entry)} · fee ${formatUsd(t.openFee)}`
-    );
+    log(`Round ${round}/${ROUNDS}: opened at ${formatPrice(entry)} · fee ${formatUsd(t.openFee)}`);
     log(`  auto-close at ${formatPrice(t.autoClosePrice)} (max loss ${formatUsd(RISK)})`);
 
     const started = Date.now();

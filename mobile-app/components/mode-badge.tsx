@@ -22,7 +22,7 @@ export function OfflineNote() {
   return (
     <View className="mt-3 rounded-2xl bg-pocket-amber/15 px-4 py-2">
       <Text className="font-inter text-xs text-pocket-amber">
-        Can&apos;t reach Perpl — showing sample prices.
+        Can&apos;t reach Perpl. Showing sample prices.
       </Text>
     </View>
   );

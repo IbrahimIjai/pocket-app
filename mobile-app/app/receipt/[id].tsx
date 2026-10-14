@@ -62,7 +62,7 @@ export default function ReceiptScreen() {
         <Text className="text-center font-inter text-base text-typography-900">{result}</Text>
         <Text className="font-inter text-base text-typography-500">
           {autoClosed
-            ? 'It hit your auto-close price — you lost only what you chose to risk.'
+            ? 'It hit your auto-close price. You lost only what you chose to risk.'
             : 'Back in your Pocket.'}
         </Text>
         {isDemo ? (
