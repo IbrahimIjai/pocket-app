@@ -77,13 +77,41 @@ export async function revealRecoveryPhrase(credentialId: string): Promise<string
   }
 }
 
+/** react-native-passkey rejects with `{ error: code, message }`; Mera keeps it as `cause`. */
+function describePasskeyFailure(cause: unknown): string {
+  const native = (cause ?? {}) as { error?: unknown; message?: unknown };
+  const code = typeof native.error === 'string' ? native.error : '';
+  const detail = typeof native.message === 'string' ? native.message : '';
+  switch (code) {
+    case 'UserCancelled':
+      return 'The passkey prompt was closed. Tap the button again when you’re ready.';
+    case 'NoCredentials':
+      return 'No Pocket passkey on this phone yet. Tap Create my Pocket instead.';
+    case 'NoCreateOption':
+    case 'NotConfigured':
+      return 'This phone can’t save passkeys yet. Sign in to a Google account and turn on Google Password Manager (Settings → Passwords & accounts), then try again.';
+    case 'NotSupported':
+      return 'This phone doesn’t support passkeys. You can still try Demo mode.';
+    case 'CredentialAlreadyExists':
+      return 'This phone already has a Pocket passkey. Tap I already have one.';
+    case 'TimedOut':
+    case 'Interrupted':
+      return 'The passkey prompt timed out. Please try again.';
+    case 'RequestFailed':
+    case 'BadConfiguration':
+      return `Android couldn’t verify Pocket for passkeys (${detail || code}). Check you’re online and try again in a minute.`;
+    default:
+      return `The passkey request did not finish${detail || code ? ` (${detail || code})` : ''}. Please try again.`;
+  }
+}
+
 export function describeAccountError(error: unknown): string {
   if (isMeraError(error)) {
     switch (error.code) {
       case 'PRF_UNAVAILABLE':
         return 'Your password manager does not support Pocket passkeys yet. Try Google Password Manager on Android or iCloud Keychain on iOS 18 or newer.';
       case 'PASSKEY_OPERATION_FAILED':
-        return 'The passkey request did not finish. Try again and check Pocket’s app/domain association if it keeps failing.';
+        return describePasskeyFailure(error.cause);
       case 'SESSION_ENDED':
         return 'Your signing session ended. Unlock your Pocket again.';
       default:
