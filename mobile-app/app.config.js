@@ -73,8 +73,10 @@ module.exports = {
     themeColor: colors.paper,
     backgroundColor: colors.paper,
   },
+  owner: 'whizzie',
   extra: {
     variant,
     rpId,
+    eas: { projectId: 'c5d1ca0d-4e46-4f92-ae51-2ac89c71a415' },
   },
 };

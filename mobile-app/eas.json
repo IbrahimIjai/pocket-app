@@ -8,33 +8,54 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "APP_VARIANT": "development"
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_CHAIN_ID": "143",
+        "EXPO_PUBLIC_RPC_URL": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_FALLBACK_RPC": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_PERPL_API_URL": "https://app.perpl.xyz/api",
+        "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
+        "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
+        "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
+        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
       },
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleDebug"
-      },
-      "environment": "development"
+      }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "APP_VARIANT": "preview"
+        "APP_VARIANT": "preview",
+        "EXPO_PUBLIC_CHAIN_ID": "143",
+        "EXPO_PUBLIC_RPC_URL": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_FALLBACK_RPC": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_PERPL_API_URL": "https://app.perpl.xyz/api",
+        "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
+        "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
+        "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
+        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
       },
       "android": {
         "buildType": "apk"
-      },
-      "environment": "preview"
+      }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "APP_VARIANT": "production"
+        "APP_VARIANT": "production",
+        "EXPO_PUBLIC_CHAIN_ID": "143",
+        "EXPO_PUBLIC_RPC_URL": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_FALLBACK_RPC": "https://rpc.monad.xyz",
+        "EXPO_PUBLIC_PERPL_API_URL": "https://app.perpl.xyz/api",
+        "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
+        "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
+        "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
+        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
       },
       "android": {
         "buildType": "apk"
-      },
-      "environment": "production"
+      }
     }
   }
 }
