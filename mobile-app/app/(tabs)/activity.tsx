@@ -5,27 +5,30 @@ import { Money } from '@/components/money';
 import { AssetBadge } from '@/components/market-row';
 import { Text } from '@/components/ui/text';
 import { formatUsd, timeAgo } from '@/lib/format';
-import { MOCK_TRADES } from '@/lib/mock';
+import { usePortfolio } from '@/hooks/usePortfolio';
 import type { Trade } from '@/lib/types';
 import { useTheme } from '@/hooks/useTheme';
 
 // S8 · Activity. Phase 6 reads from lib/journal.ts; Phase 8 from Envio.
 export default function ActivityScreen() {
   const theme = useTheme();
+  const { mode, trades } = usePortfolio();
 
   return (
     <Screen scroll tabBarSpace>
       <Text className="mt-4 font-inter-bold text-3xl text-typography-900">Activity</Text>
-      {MOCK_TRADES.length === 0 ? (
+      {trades.length === 0 ? (
         <View className="mt-24 items-center gap-3">
           <Feather name="activity" size={28} color={theme.muted} />
           <Text className="font-inter text-base text-typography-500">
-            Your closed trades will show up here.
+            {mode === 'demo'
+              ? 'Your closed demo trades will show up here.'
+              : 'Your closed trades will show up here.'}
           </Text>
         </View>
       ) : (
         <View className="mt-4">
-          {MOCK_TRADES.map((t, i) => (
+          {trades.map((t, i) => (
             <TradeRow key={t.id} trade={t} divider={i > 0} />
           ))}
         </View>
@@ -46,6 +49,7 @@ function TradeRow({ trade, divider }: { trade: Trade; divider: boolean }) {
         </Text>
         <Text className="font-inter text-sm text-typography-500">
           {formatUsd(trade.riskUsd, { cents: false })} risk · {timeAgo(trade.closedAt)}
+          {trade.autoClosed ? ' · auto-closed' : ''}
         </Text>
       </View>
       <Money value={trade.pnlUsd} sign tone className="font-inter-semibold text-base" />

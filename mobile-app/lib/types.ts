@@ -8,6 +8,8 @@ export type Market = {
   symbol: string; // 'BTC'
   name: string; // 'Bitcoin'
   marketId: number; // Perpl market id (resolved from /v1/pub/context by symbol)
+  priceDecimals?: number; // Perpl scaling — present on live data
+  sizeDecimals?: number;
   price: number; // mark price, USD
   change24hPct: number;
   fundingPctPerHour: number; // positive = longs pay
@@ -26,6 +28,7 @@ export type Position = {
   size: number; // base units
   autoClosePrice: number;
   openedAt: number; // ms
+  openFee?: number; // USD paid to open
   openTx?: `0x${string}`;
 };
 
@@ -39,6 +42,8 @@ export type Trade = {
   openedAt: number;
   closedAt: number;
   settleMs?: number;
+  autoClosed?: boolean; // hit the auto-close price
+  demo?: boolean; // paper trade
   openTx?: `0x${string}`;
   closeTx?: `0x${string}`;
 };

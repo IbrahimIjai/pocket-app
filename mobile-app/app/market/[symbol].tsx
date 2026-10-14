@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
@@ -8,26 +8,30 @@ import { PocketButton } from '@/components/pocket-button';
 import { Chip } from '@/components/chip';
 import { Text } from '@/components/ui/text';
 import { formatPct, formatPrice } from '@/lib/format';
-import { mockMarket, mockSeries } from '@/lib/mock';
+import { TIMEFRAMES, type Timeframe } from '@/lib/perpl/market-data';
+import { useMarket } from '@/hooks/useMarkets';
+import { useCandles } from '@/hooks/useCandles';
 import { useTheme } from '@/hooks/useTheme';
 
-const TIMEFRAMES = ['1H', '1D', '1W', '1M'] as const;
-type Timeframe = (typeof TIMEFRAMES)[number];
-const POINTS: Record<Timeframe, number> = { '1H': 30, '1D': 60, '1W': 90, '1M': 120 };
+const CHART_HEIGHT = 220;
 
-// S4 · Market. Phase 2 swaps mocks for useMarkets()/useCandles().
+// S4 · Market — live mark price + Perpl candles.
 export default function MarketScreen() {
   const { symbol = 'BTC' } = useLocalSearchParams<{ symbol: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const market = mockMarket(symbol);
+  const { market, isLoading } = useMarket(symbol);
   const [tf, setTf] = useState<Timeframe>('1D');
-  const series = useMemo(() => mockSeries(symbol, POINTS[tf]), [symbol, tf]);
+  const candles = useCandles(market?.marketId, market?.priceDecimals, tf);
 
   if (!market) {
     return (
-      <Screen back title="Market">
-        <Text className="font-inter text-typography-500">Unknown market “{symbol}”.</Text>
+      <Screen back title={symbol}>
+        {isLoading ? (
+          <ActivityIndicator className="mt-10" color={theme.brand.mint} />
+        ) : (
+          <Text className="font-inter text-typography-500">Unknown market “{symbol}”.</Text>
+        )}
       </Screen>
     );
   }
@@ -36,6 +40,8 @@ export default function MarketScreen() {
   const fundingSide = market.fundingPctPerHour >= 0 ? 'longs pay' : 'shorts pay';
   const trade = (side: 'long' | 'short') =>
     router.push({ pathname: '/trade/[symbol]', params: { symbol: market.symbol, side } });
+  // Show today's live price as the last point so the chart and the header agree.
+  const series = candles.data?.length ? [...candles.data, market.price] : [];
 
   return (
     <Screen
@@ -71,12 +77,20 @@ export default function MarketScreen() {
         </Text>
       </View>
 
-      <View className="-mx-5 mt-6">
-        <PriceChart data={series} height={220} />
+      <View className="-mx-5 mt-6" style={{ height: CHART_HEIGHT }}>
+        {candles.isLoading ? (
+          <ActivityIndicator className="mt-20" color={theme.brand.mint} />
+        ) : series.length > 1 ? (
+          <PriceChart data={series} height={CHART_HEIGHT} />
+        ) : (
+          <Text className="mt-20 text-center font-inter text-sm text-typography-500">
+            No chart data yet.
+          </Text>
+        )}
       </View>
 
       <View className="mt-4 flex-row gap-2">
-        {TIMEFRAMES.map((t) => (
+        {(Object.keys(TIMEFRAMES) as Timeframe[]).map((t) => (
           <Chip key={t} label={t} selected={tf === t} onPress={() => setTf(t)} />
         ))}
       </View>
@@ -85,7 +99,8 @@ export default function MarketScreen() {
         <Feather name="clock" size={16} color={theme.muted} />
         <Text className="flex-1 font-inter text-sm text-typography-500">
           Funding: {fundingSide}{' '}
-          {formatPct(Math.abs(market.fundingPctPerHour), { sign: false, digits: 3 })}/h
+          {formatPct(Math.abs(market.fundingPctPerHour), { sign: false, digits: 4 })}/h · up to{' '}
+          {market.maxLeverage}×
         </Text>
       </View>
     </Screen>

@@ -1,33 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
 import { Money } from '@/components/money';
+import { ModeBadge } from '@/components/mode-badge';
 import { PocketButton } from '@/components/pocket-button';
 import { RiskMeter } from '@/components/risk-meter';
 import { Text } from '@/components/ui/text';
 import { EXPLORER_TX, formatPct, formatPrice, shortAddress, timeAgo } from '@/lib/format';
-import { MOCK_POSITIONS, mockMarket } from '@/lib/mock';
 import { positionStats } from '@/lib/positions';
 import { BOLDNESS } from '@/lib/risk';
+import { useDemo } from '@/lib/demo';
+import type { Trade } from '@/lib/types';
+import { useMarket } from '@/hooks/useMarkets';
+import { usePortfolio } from '@/hooks/usePortfolio';
 import { useTheme } from '@/hooks/useTheme';
 
-const TICK_MS = 1500;
+function receiptParams(t: Trade) {
+  return {
+    id: t.id,
+    symbol: t.symbol,
+    pnl: t.pnlUsd.toFixed(2),
+    risk: String(t.riskUsd),
+    settleMs: String(t.settleMs ?? 0),
+    autoClosed: t.autoClosed ? '1' : '0',
+    demo: t.demo ? '1' : '0',
+  };
+}
 
-// S6 · Live trade. Phase 6 replaces the mock drift with the live mark price + chain position.
+// S6 · Live trade — live mark price; demo positions settle locally, live ones on Perpl (Phase 6).
 export default function LiveTradeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const position = MOCK_POSITIONS.find((p) => p.id === id);
-  const start = position ? (mockMarket(position.symbol)?.price ?? position.entryPrice) : 0;
-  const [mark, setMark] = useState(start);
+  const { positions, trades } = usePortfolio();
+  const demo = useDemo();
+  const position = positions.find((p) => p.id === id);
+  const { market } = useMarket(position?.symbol);
 
+  // If it auto-closed while we were watching, show the receipt.
+  const closedTrade = position ? undefined : trades.find((t) => t.id === id);
   useEffect(() => {
-    const t = setInterval(() => setMark((m) => m * (1 + (Math.random() - 0.5) * 0.006)), TICK_MS);
-    return () => clearInterval(t);
-  }, []);
+    if (closedTrade) {
+      router.replace({ pathname: '/receipt/[id]', params: receiptParams(closedTrade) });
+    }
+  }, [closedTrade, router]);
 
   if (!position) {
     return (
@@ -37,26 +55,21 @@ export default function LiveTradeScreen() {
     );
   }
 
+  const mark = market?.price ?? position.entryPrice;
   const { pnl, pnlPctOfRisk, meter } = positionStats(position, mark);
   const boldness = BOLDNESS.find((b) => b.k === position.k)?.label ?? '';
   const sideLabel = position.side === 'long' ? 'Up' : 'Down';
 
-  const close = () =>
-    router.replace({
-      pathname: '/receipt/[id]',
-      params: {
-        id: position.id,
-        symbol: position.symbol,
-        pnl: pnl.toFixed(2),
-        risk: String(position.riskUsd),
-        settleMs: '800',
-      },
-    });
+  const close = () => {
+    const trade = demo.close(position.id);
+    if (trade) router.replace({ pathname: '/receipt/[id]', params: receiptParams(trade) });
+  };
 
   return (
     <Screen
       back
       title={`${position.symbol} ${sideLabel} · ${boldness} ${position.k}×`}
+      right={<ModeBadge />}
       footer={<PocketButton variant="secondary" label="Close trade" onPress={close} />}>
       <View className="mt-6 gap-1">
         <Money value={pnl} sign tone className="font-inter-bold text-6xl leading-[68px]" />

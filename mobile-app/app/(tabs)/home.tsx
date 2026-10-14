@@ -1,25 +1,29 @@
-import { Image, Pressable, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
 import { Money } from '@/components/money';
 import { MarketRow } from '@/components/market-row';
+import { ModeBadge, OfflineNote } from '@/components/mode-badge';
 import { PositionCard } from '@/components/position-card';
 import { Text } from '@/components/ui/text';
-import { MOCK_BALANCES, MOCK_MARKETS, MOCK_POSITIONS, mockMarket } from '@/lib/mock';
 import { positionStats } from '@/lib/positions';
+import { useMarkets } from '@/hooks/useMarkets';
+import { usePortfolio } from '@/hooks/usePortfolio';
 import { useTheme } from '@/hooks/useTheme';
 
-// S3 · Home. Phase 4 swaps balances for useBalances(), Phase 6 positions for chain reads.
+// S3 · Home — live prices (Phase 2) + demo/live portfolio.
 export default function HomeScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const { markets, isLoading, offline } = useMarkets();
+  const { mode, balances, positions } = usePortfolio();
 
-  const positions = MOCK_POSITIONS.map((p) => ({
+  const priced = positions.map((p) => ({
     position: p,
-    mark: mockMarket(p.symbol)?.price ?? p.entryPrice,
+    mark: markets.find((m) => m.symbol === p.symbol)?.price ?? p.entryPrice,
   }));
-  const uPnl = positions.reduce(
+  const uPnl = priced.reduce(
     (sum, { position, mark }) => sum + positionStats(position, mark).pnl,
     0
   );
@@ -27,16 +31,19 @@ export default function HomeScreen() {
   return (
     <Screen scroll tabBarSpace>
       <View className="h-12 flex-row items-center justify-between">
-        <Image
-          source={
-            theme.mode === 'dark'
-              ? require('../../assets/brand/pocket-wordmark-dark.png')
-              : require('../../assets/brand/pocket-wordmark-light.png')
-          }
-          accessibilityLabel="Pocket"
-          resizeMode="contain"
-          style={{ width: 104, height: 32 }}
-        />
+        <View className="flex-row items-center gap-2">
+          <Image
+            source={
+              theme.mode === 'dark'
+                ? require('../../assets/brand/pocket-wordmark-dark.png')
+                : require('../../assets/brand/pocket-wordmark-light.png')
+            }
+            accessibilityLabel="Pocket"
+            resizeMode="contain"
+            style={{ width: 104, height: 32 }}
+          />
+          <ModeBadge />
+        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Settings"
@@ -46,35 +53,39 @@ export default function HomeScreen() {
           <Feather name="settings" size={18} color={theme.text} />
         </Pressable>
       </View>
+      {offline && <OfflineNote />}
 
       <View className="mt-6 gap-1">
-        <Text className="font-inter-medium text-sm text-typography-500">Your Pocket</Text>
-        <Money
-          value={MOCK_BALANCES.pocketUsd}
-          className="font-inter-bold text-5xl leading-[56px]"
-        />
+        <Text className="font-inter-medium text-sm text-typography-500">
+          {mode === 'demo' ? 'Demo Pocket' : 'Your Pocket'}
+        </Text>
+        <Money value={balances.pocketUsd} className="font-inter-bold text-5xl leading-[56px]" />
         <View className="flex-row items-center gap-2">
           <Money
-            value={MOCK_BALANCES.inTradesUsd}
+            value={balances.inTradesUsd}
             className="font-inter-medium text-base text-typography-500"
           />
           <Text className="font-inter text-base text-typography-500">in trades</Text>
-          <Money value={uPnl} sign tone className="font-inter-medium text-base" />
+          {positions.length > 0 && (
+            <Money value={uPnl} sign tone className="font-inter-medium text-base" />
+          )}
         </View>
       </View>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/add')}
-        className="mt-5 h-11 flex-row items-center justify-center gap-2 self-start rounded-full border border-outline-200 bg-background-50 px-5 active:opacity-80">
-        <Feather name="plus" size={16} color={theme.text} />
-        <Text className="font-inter-semibold text-sm text-typography-900">Add dollars</Text>
-      </Pressable>
+      {mode === 'live' && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/add')}
+          className="mt-5 h-11 flex-row items-center justify-center gap-2 self-start rounded-full border border-outline-200 bg-background-50 px-5 active:opacity-80">
+          <Feather name="plus" size={16} color={theme.text} />
+          <Text className="font-inter-semibold text-sm text-typography-900">Add dollars</Text>
+        </Pressable>
+      )}
 
-      {positions.length > 0 && (
+      {priced.length > 0 && (
         <View className="mt-8 gap-3">
           <Text className="font-inter-semibold text-lg text-typography-900">Open trades</Text>
-          {positions.map(({ position, mark }) => (
+          {priced.map(({ position, mark }) => (
             <PositionCard
               key={position.id}
               position={position}
@@ -89,15 +100,19 @@ export default function HomeScreen() {
 
       <View className="mt-8">
         <Text className="mb-1 font-inter-semibold text-lg text-typography-900">Markets</Text>
-        {MOCK_MARKETS.map((m) => (
-          <MarketRow
-            key={m.symbol}
-            market={m}
-            onPress={() =>
-              router.push({ pathname: '/market/[symbol]', params: { symbol: m.symbol } })
-            }
-          />
-        ))}
+        {isLoading ? (
+          <ActivityIndicator className="mt-6" color={theme.brand.mint} />
+        ) : (
+          markets.map((m) => (
+            <MarketRow
+              key={m.symbol}
+              market={m}
+              onPress={() =>
+                router.push({ pathname: '/market/[symbol]', params: { symbol: m.symbol } })
+              }
+            />
+          ))
+        )}
       </View>
     </Screen>
   );

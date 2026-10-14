@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
@@ -7,7 +7,9 @@ import { Chip } from '@/components/chip';
 import { HoldButton } from '@/components/hold-button';
 import { Text } from '@/components/ui/text';
 import { formatPct, formatPrice, formatUsd } from '@/lib/format';
-import { mockMarket } from '@/lib/mock';
+import { useDemo } from '@/lib/demo';
+import { useMarket } from '@/hooks/useMarkets';
+import { usePortfolio } from '@/hooks/usePortfolio';
 import { BOLDNESS, RISK_PRESETS_USD, sizeTrade, type Multiplier, type Side } from '@/lib/risk';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -20,7 +22,9 @@ export default function TradeTicketScreen() {
   const side: Side = params.side === 'short' ? 'short' : 'long';
   const router = useRouter();
   const theme = useTheme();
-  const market = mockMarket(params.symbol ?? 'BTC');
+  const { market, isLoading } = useMarket(params.symbol ?? 'BTC');
+  const { mode, balances, canTrade } = usePortfolio();
+  const demo = useDemo();
 
   const [risk, setRisk] = useState<number>(5);
   const [custom, setCustom] = useState('');
@@ -31,27 +35,40 @@ export default function TradeTicketScreen() {
   if (!market) {
     return (
       <Screen back title="Trade">
-        <Text className="font-inter text-typography-500">Unknown market.</Text>
+        {isLoading ? (
+          <ActivityIndicator className="mt-10" color={theme.brand.mint} />
+        ) : (
+          <Text className="font-inter text-typography-500">Unknown market.</Text>
+        )}
       </Screen>
     );
   }
 
   const riskUsd = isCustom ? Math.min(Number(custom) || 0, MAX_CUSTOM_RISK) : risk;
-  const valid = riskUsd >= 1;
+  // Fall back to the boldest allowed multiplier if this market caps leverage lower.
+  const allowed = BOLDNESS.filter((b) => b.k <= market.maxLeverage);
+  const kUsed: Multiplier = k <= market.maxLeverage ? k : (allowed.at(-1)?.k ?? 2);
   const t = sizeTrade({
-    riskUsd: valid ? riskUsd : 0,
-    k,
+    riskUsd: riskUsd >= 1 ? riskUsd : 0,
+    k: kUsed,
     markPrice: market.price,
     side,
     mmr: market.mmr,
     takerFeeRate: market.takerFeeRate,
   });
+  const affordable = riskUsd + t.openFee <= balances.pocketUsd;
+  const valid = canTrade && riskUsd >= 1 && affordable;
   const dirWord = side === 'long' ? 'falls' : 'rises';
   const movePct = side === 'long' ? -t.autoCloseMovePct : t.autoCloseMovePct;
 
   const onConfirm = () => {
-    // Phase 6: passkey session → deposit → execOrder. For now jump to the mock live trade.
-    router.replace({ pathname: '/position/[id]', params: { id: 'mock-btc-1' } });
+    if (mode === 'demo') {
+      const position = demo.open({ market, side, riskUsd, k: kUsed });
+      router.replace({ pathname: '/position/[id]', params: { id: position.id } });
+      return;
+    }
+    // Phase 6: passkey session → deposit → execOrder on Perpl.
+    Alert.alert('Live trading is almost here', 'Switch to Demo on the You tab to try it now.');
   };
 
   return (
@@ -107,7 +124,7 @@ export default function TradeTicketScreen() {
             key={b.k}
             label={b.label}
             sublabel={`${b.k}×`}
-            selected={k === b.k}
+            selected={kUsed === b.k}
             disabled={b.k > market.maxLeverage}
             onPress={() => setK(b.k)}
           />
@@ -137,7 +154,11 @@ export default function TradeTicketScreen() {
           </>
         ) : (
           <Text className="font-inter text-base text-typography-500">
-            Enter at least $1 to see your trade.
+            {!canTrade
+              ? 'Live trading isn’t switched on yet. Switch to Demo on the You tab to try it.'
+              : riskUsd < 1
+                ? 'Enter at least $1 to see your trade.'
+                : `Not enough in your Pocket — you have ${formatUsd(balances.pocketUsd)}.`}
           </Text>
         )}
       </View>
@@ -150,9 +171,9 @@ export default function TradeTicketScreen() {
         <Text className="font-inter-medium text-sm text-typography-500">Details</Text>
         <Feather name={showDetails ? 'chevron-up' : 'chevron-down'} size={16} color={theme.muted} />
       </Pressable>
-      {showDetails && valid && (
+      {showDetails && riskUsd >= 1 && (
         <View className="gap-2 rounded-2xl border border-outline-200 p-4">
-          <Row label="Leverage" value={`${k}×`} />
+          <Row label="Leverage" value={`${kUsed}× (max ${market.maxLeverage}×)`} />
           <Row label="Position size" value={`${t.size.toPrecision(4)} ${market.symbol}`} />
           <Row label="Entry (mark) price" value={formatPrice(market.price)} />
           <Row label="Margin" value={formatUsd(t.margin)} />

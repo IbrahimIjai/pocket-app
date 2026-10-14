@@ -14,6 +14,8 @@ import {
 import '../global.css';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { QueryProvider } from '@/lib/query-client';
+import { ModeProvider } from '@/lib/mode';
+import { DemoProvider } from '@/lib/demo';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -51,44 +53,48 @@ function RootLayoutNav() {
   const navigationTheme = mode === 'dark' ? DarkTheme : DefaultTheme;
   return (
     <QueryProvider>
-      <GluestackUIProvider mode="system">
-        <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-        <ThemeProvider
-          value={{
-            ...navigationTheme,
-            colors: {
-              ...navigationTheme.colors,
-              primary: colors.mint,
-              background: theme.background,
-              card: theme.surface,
-              text: theme.text,
-              border: theme.border,
-              notification: colors.coral,
-            },
-          }}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: 'fade',
-              contentStyle: { backgroundColor: theme.background },
-            }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="welcome" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="add" options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name="market/[symbol]" options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen
-              name="trade/[symbol]"
-              options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
-            />
-            <Stack.Screen name="position/[id]" options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen
-              name="receipt/[id]"
-              options={{ animation: 'fade', gestureEnabled: false }}
-            />
-          </Stack>
-        </ThemeProvider>
-      </GluestackUIProvider>
+      <ModeProvider>
+        <DemoProvider>
+          <GluestackUIProvider mode="system">
+            <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+            <ThemeProvider
+              value={{
+                ...navigationTheme,
+                colors: {
+                  ...navigationTheme.colors,
+                  primary: colors.mint,
+                  background: theme.background,
+                  card: theme.surface,
+                  text: theme.text,
+                  border: theme.border,
+                  notification: colors.coral,
+                },
+              }}>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'fade',
+                  contentStyle: { backgroundColor: theme.background },
+                }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="welcome" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="add" options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen name="market/[symbol]" options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen
+                  name="trade/[symbol]"
+                  options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+                />
+                <Stack.Screen name="position/[id]" options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen
+                  name="receipt/[id]"
+                  options={{ animation: 'fade', gestureEnabled: false }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </GluestackUIProvider>
+        </DemoProvider>
+      </ModeProvider>
     </QueryProvider>
   );
 }
