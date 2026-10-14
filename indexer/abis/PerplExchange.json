@@ -1,0 +1,594 @@
+[
+ {
+  "type": "event",
+  "name": "AccountCreated",
+  "inputs": [
+   {
+    "name": "account",
+    "type": "address",
+    "indexed": false,
+    "internalType": "address"
+   },
+   {
+    "name": "id",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "CollateralDeposit",
+  "inputs": [
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "amountCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "balanceCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "CollateralWithdrawal",
+  "inputs": [
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "amountCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "balanceCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionClosed",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "pricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "deltaPnlCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "fundingCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionDecreased",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "startDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "startLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "deltaPnlCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "fundingCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionIncreased",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "leverageHdths",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "startDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pnlCollateralizedCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "premiumPnlSettledCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "maxNegPnlCollatBPS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "startLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "insFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "protFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionIncreasedV2",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "leverageHdths",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "startDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pnlCollateralizedCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "premiumPnlSettledCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "maxNegPnlCollatBPS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "startLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "endLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "insFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "protFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "priceResiduePNSQ16",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionLiquidated",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "posAccountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "markPricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "liqPricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "liqLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "posLotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "deltaPnlCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "fundingCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "posAmountCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "posDepositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accAmountCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "accBalanceCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "onOrderBook",
+    "type": "bool",
+    "indexed": false,
+    "internalType": "bool"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionOpened",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "leverageHdths",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "depositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pnlCollateralizedCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "pricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "lotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "insFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "protFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ },
+ {
+  "type": "event",
+  "name": "PositionOpenedV2",
+  "inputs": [
+   {
+    "name": "perpId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "accountId",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "positionType",
+    "type": "uint8",
+    "indexed": false,
+    "internalType": "enum PositionEnum"
+   },
+   {
+    "name": "leverageHdths",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "depositCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "pnlCollateralizedCNS",
+    "type": "int256",
+    "indexed": false,
+    "internalType": "int256"
+   },
+   {
+    "name": "pricePNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "lotLNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "insFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "protFeeCNS",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   },
+   {
+    "name": "priceResiduePNSQ16",
+    "type": "uint256",
+    "indexed": false,
+    "internalType": "uint256"
+   }
+  ],
+  "anonymous": false
+ }
+]

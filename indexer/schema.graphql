@@ -1,0 +1,54 @@
+# Pocket's view of Perpl on Monad: accounts, their trades (open → close/liquidation) and transfers.
+# All CNS amounts are AUSD base units (6 dp); PNS prices use each market's price_decimals.
+
+type Account {
+  id: ID! # Perpl accountId
+  address: String! @index # lowercased owner address
+  createdAt: Int!
+  depositsCNS: BigInt!
+  withdrawalsCNS: BigInt!
+  realizedPnlCNS: BigInt!
+  fundingCNS: BigInt!
+  tradesOpened: Int!
+  tradesClosed: Int!
+  liquidations: Int!
+}
+
+# One row per position lifecycle (open → increases/decreases → close or liquidation).
+type Trade {
+  id: ID! # `${accountId}-${perpId}-${openBlock}-${openLogIndex}`
+  accountId: String! @index
+  address: String! @index
+  perpId: Int!
+  side: String! # long | short
+  leverageHdths: BigInt!
+  entryPricePNS: BigInt!
+  depositCNS: BigInt! # largest collateral committed while open
+  lotLNS: BigInt! # largest size while open
+  status: String! @index # open | closed | liquidated
+  realizedPnlCNS: BigInt!
+  fundingCNS: BigInt!
+  feesCNS: BigInt! # insurance + protocol fees charged on entry/increase
+  exitPricePNS: BigInt
+  openedAt: Int!
+  openTx: String!
+  closedAt: Int
+  closeTx: String
+}
+
+# Which Trade is currently open for (account, market).
+type OpenPosition {
+  id: ID! # `${accountId}-${perpId}`
+  tradeId: String!
+}
+
+type Transfer {
+  id: ID!
+  accountId: String! @index
+  address: String! @index
+  kind: String! # deposit | withdrawal
+  amountCNS: BigInt!
+  balanceCNS: BigInt!
+  timestamp: Int!
+  txHash: String!
+}
