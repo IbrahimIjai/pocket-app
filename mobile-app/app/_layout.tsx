@@ -51,8 +51,7 @@ function RootLayoutNav() {
     <GluestackUIProvider mode={(colorScheme ?? 'light') as 'light' | 'dark'}>
       <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="home" />
-        <Stack.Screen name="about" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="(tabs)" />
       </Stack>
     </GluestackUIProvider>
   );
