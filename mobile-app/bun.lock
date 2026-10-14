@@ -14,6 +14,8 @@
         "@gluestack-ui/utils": "^3.0.21",
         "@gluestack/ui-next-adapter": "^3.0.3",
         "@legendapp/motion": "^2.4.0",
+        "@noble/ciphers": "1.3.0",
+        "@noble/hashes": "2.2.0",
         "@react-native-async-storage/async-storage": "2.2.0",
         "@scure/bip32": "^2.4.0",
         "@scure/bip39": "^2.4.0",

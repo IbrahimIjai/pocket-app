@@ -23,7 +23,7 @@ export function requireRpId(): string {
   return rpId;
 }
 
-async function passkeyClient() {
+export async function passkeyClient() {
   if (!passkeysAvailable()) {
     throw new Error('Install Pocket on your phone to use a passkey. You can still try Demo mode.');
   }

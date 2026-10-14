@@ -8,15 +8,17 @@ import { formatUsd, timeAgo } from '@/lib/format';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import type { Trade } from '@/lib/types';
 import { useTheme } from '@/hooks/useTheme';
+import { JournalLock } from '@/components/account/journal-lock';
 
 // S8 · Activity. Phase 6 reads from lib/journal.ts; Phase 8 from Envio.
 export default function ActivityScreen() {
   const theme = useTheme();
-  const { mode, trades } = usePortfolio();
+  const { mode, trades, signedIn } = usePortfolio();
 
   return (
     <Screen scroll tabBarSpace>
       <Text className="mt-4 font-inter-bold text-3xl text-typography-900">Activity</Text>
+      {mode === 'live' && signedIn && <JournalLock />}
       {trades.length === 0 ? (
         <View className="mt-24 items-center gap-3">
           <Feather name="activity" size={28} color={theme.muted} />
