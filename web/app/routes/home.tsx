@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { ArrowDownRight, ArrowUpRight } from "lucide-react"
+import { GetPocketDialog } from "~/components/get-pocket-dialog"
 
 const REPOSITORY = "https://github.com/IbrahimIjai/pocket-app"
-const ANDROID_APP = "https://expo.dev/accounts/whizzie/projects/pocket/builds"
 const ENTRY_PRICE = 100_000
 const MAINTENANCE_MARGIN = 0.04
 const PACES = [
@@ -85,14 +85,7 @@ export default function Home() {
             <br />
             Trading that makes sense before you tap.
           </p>
-          <a
-            className="get-pocket"
-            href={ANDROID_APP}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Get Pocket <ArrowUpRight size={20} aria-hidden="true" />
-          </a>
+          <GetPocketDialog className="get-pocket" />
           <p className="availability">For Android. Made for you.</p>
         </section>
         <section className="trade-preview" aria-labelledby="preview-title">
