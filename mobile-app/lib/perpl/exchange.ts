@@ -40,17 +40,22 @@ const AUSD_DECIMALS = 6; // verified 2026-10-14: AUSD and Perpl CNS both 6 dp
 export const cnsToUsd = (cns: bigint) => Number(cns) / 10 ** AUSD_DECIMALS;
 export const usdToCns = (usd: number) => BigInt(Math.round(usd * 10 ** AUSD_DECIMALS));
 
+export const MONAD_USDC = getAddress('0x754704bc059f8c67012fed69bc8a327a5aafb603'); // 6 dp
+
 export async function readWallet(address: Address) {
-  const [ausd, mon] = await Promise.all([
+  const balanceOf = (token: Address) =>
     publicClient.readContract({
-      address: getAddress(config.ausd),
+      address: token,
       abi: erc20Abi,
       functionName: 'balanceOf',
       args: [address],
-    }),
+    });
+  const [ausd, usdc, mon] = await Promise.all([
+    balanceOf(getAddress(config.ausd)),
+    balanceOf(MONAD_USDC),
     publicClient.getBalance({ address }),
   ]);
-  return { ausd, mon };
+  return { ausd, usdc, mon };
 }
 
 export type ChainPosition = {

@@ -1,4 +1,5 @@
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import QRCode from 'react-native-qrcode-svg';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
@@ -11,15 +12,21 @@ import { formatUsd } from '@/lib/format';
 import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/theme/brand';
 
-const OPTIONS: { icon: keyof typeof Feather.glyphMap; label: string; soon?: boolean }[] = [
+const OPTIONS: {
+  icon: keyof typeof Feather.glyphMap;
+  label: string;
+  soon?: boolean;
+  href?: '/add-any-chain';
+}[] = [
   { icon: 'send', label: 'From an exchange or wallet' },
-  { icon: 'globe', label: 'From any chain', soon: true },
+  { icon: 'globe', label: 'From any chain (USDC/USDT via Aurora)', href: '/add-any-chain' },
   { icon: 'credit-card', label: 'With a card', soon: true },
 ];
 
 // S2 · Add dollars. Phase 4: real address, polls AUSD + MON every 2s, auto-advances when funded.
 export default function AddDollarsScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const session = useOptionalSession();
   const address = session?.status === 'ready' ? session.address : null;
   const live = useLiveAccount(address);
@@ -53,9 +60,12 @@ export default function AddDollarsScreen() {
       </Text>
       <View className="mt-3 overflow-hidden rounded-3xl border border-outline-200 bg-background-50">
         {OPTIONS.map((o, i) => (
-          <View
+          <Pressable
             key={o.label}
-            className={`flex-row items-center gap-3 px-4 py-4 ${i > 0 ? 'border-t border-outline-200' : ''} ${o.soon ? 'opacity-50' : ''}`}>
+            disabled={!o.href}
+            accessibilityRole={o.href ? 'button' : undefined}
+            onPress={() => o.href && router.push(o.href)}
+            className={`flex-row items-center gap-3 px-4 py-4 active:opacity-70 ${i > 0 ? 'border-t border-outline-200' : ''} ${o.soon ? 'opacity-50' : ''}`}>
             <Feather name={o.icon} size={18} color={theme.text} />
             <Text className="flex-1 font-inter-medium text-base text-typography-900">
               {o.label}
@@ -65,13 +75,17 @@ export default function AddDollarsScreen() {
                 soon
               </Text>
             )}
-          </View>
+            {o.href && <Feather name="chevron-right" size={18} color={theme.muted} />}
+          </Pressable>
         ))}
       </View>
 
       <View className="mt-6 gap-3 rounded-3xl border border-outline-200 p-4">
         <BalanceRow label="AUSD (dollars)" value={formatUsd(ausd)} />
         <BalanceRow label="MON (for network fees)" value={`${mon.toFixed(4)} MON`} />
+        {(live.data?.usdcUsd ?? 0) > 0 && (
+          <BalanceRow label="USDC on Monad" value={formatUsd(live.data!.usdcUsd)} />
+        )}
         <Text className="font-inter text-xs text-typography-500">
           You need a little MON too. Every trade pays a tiny Monad network fee.
         </Text>

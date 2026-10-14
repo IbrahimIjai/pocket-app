@@ -22,6 +22,7 @@ export function useLiveAccount(address: Address | null) {
       const chainPositions = account ? await readPositions(account.accountId, perpIds) : [];
       return {
         walletUsd: cnsToUsd(wallet.ausd),
+        usdcUsd: cnsToUsd(wallet.usdc), // USDC on Monad (e.g. from Aurora any-chain deposits)
         mon: Number(wallet.mon) / 1e18,
         accountId: account?.accountId ?? null,
         freeUsd: account ? cnsToUsd(account.balanceCNS) : 0,
