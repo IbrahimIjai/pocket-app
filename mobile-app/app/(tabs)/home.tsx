@@ -16,7 +16,7 @@ import { useTheme } from '@/hooks/useTheme';
 export default function HomeScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const { markets, isLoading, offline } = useMarkets();
+  const { markets, isLoading, offline, refetch } = useMarkets();
   const { mode, balances, positions } = usePortfolio();
 
   const priced = positions.map((p) => ({
@@ -29,7 +29,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <Screen scroll tabBarSpace>
+    <Screen scroll tabBarSpace onRefresh={refetch}>
       <View className="h-12 flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
           <Image
@@ -80,6 +80,21 @@ export default function HomeScreen() {
           <Feather name="plus" size={16} color={theme.text} />
           <Text className="font-inter-semibold text-sm text-typography-900">Add dollars</Text>
         </Pressable>
+      )}
+
+      {priced.length === 0 && (
+        <View className="mt-8 flex-row items-center gap-3 rounded-3xl border border-outline-200 bg-background-50 p-4">
+          <Feather
+            name={mode === 'demo' ? 'play-circle' : 'lock'}
+            size={22}
+            color={mode === 'demo' ? theme.brand.mint : theme.muted}
+          />
+          <Text className="flex-1 font-inter text-sm leading-5 text-typography-500">
+            {mode === 'demo'
+              ? 'Try it: pick a market below, choose $5 and hold to trade. Demo money, live prices.'
+              : 'Live trading needs your Face ID account and AUSD. Switch to Demo on the You tab to practise.'}
+          </Text>
+        </View>
       )}
 
       {priced.length > 0 && (

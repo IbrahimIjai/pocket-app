@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { useState, type ReactNode } from 'react';
+import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
@@ -16,11 +16,31 @@ type Props = {
   /** Extra bottom padding so content clears the floating tab bar. */
   tabBarSpace?: boolean;
   footer?: ReactNode;
+  /** Pull-to-refresh (scroll screens only). */
+  onRefresh?: () => Promise<unknown>;
 };
 
-export function Screen({ children, title, back, right, scroll, tabBarSpace, footer }: Props) {
+export function Screen({
+  children,
+  title,
+  back,
+  right,
+  scroll,
+  tabBarSpace,
+  footer,
+  onRefresh,
+}: Props) {
   const router = useRouter();
   const theme = useTheme();
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      await onRefresh?.();
+    } finally {
+      setRefreshing(false);
+    }
+  };
   const showHeader = Boolean(title || back || right);
   const bottom = tabBarSpace ? 112 : 24;
 
@@ -53,7 +73,16 @@ export function Screen({ children, title, back, right, scroll, tabBarSpace, foot
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: bottom }}
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            onRefresh ? (
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={refresh}
+                tintColor={theme.brand.mint}
+              />
+            ) : undefined
+          }>
           {children}
         </ScrollView>
       ) : (

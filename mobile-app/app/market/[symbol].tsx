@@ -84,7 +84,9 @@ export default function MarketScreen() {
           <PriceChart data={series} height={CHART_HEIGHT} />
         ) : (
           <Text className="mt-20 text-center font-inter text-sm text-typography-500">
-            No chart data yet.
+            {candles.isError
+              ? 'Couldn’t load the chart. Try another timeframe.'
+              : 'No chart data yet.'}
           </Text>
         )}
       </View>
