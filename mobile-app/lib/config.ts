@@ -13,4 +13,8 @@ export const config = {
     '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a') as `0x${string}`,
   /** Passkey rpId (plan D10). Empty until the domain is chosen. */
   rpId: process.env.EXPO_PUBLIC_RP_ID ?? '',
+  /** Envio HyperIndex GraphQL endpoint for Perpl history (indexer/). Empty = local journal only. */
+  envioUrl: process.env.EXPO_PUBLIC_ENVIO_URL ?? '',
+  /** Pocket web (server routes that hold third-party API keys, e.g. Nansen). */
+  webUrl: process.env.EXPO_PUBLIC_WEB_URL || 'https://pocket-app-web.vercel.app',
 } as const;

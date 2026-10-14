@@ -44,6 +44,7 @@ export type Trade = {
   settleMs?: number;
   autoClosed?: boolean; // hit the auto-close price
   demo?: boolean; // paper trade
+  indexed?: boolean; // from the Envio indexer
   openTx?: `0x${string}`;
   closeTx?: `0x${string}`;
 };
