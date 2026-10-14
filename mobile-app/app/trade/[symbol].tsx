@@ -41,7 +41,7 @@ export default function TradeTicketScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { market, isLoading } = useMarket(params.symbol ?? 'BTC');
-  const { mode, balances, canTrade, readyOnPerplUsd, signedIn } = usePortfolio();
+  const { mode, balances, canTrade, readyOnPerplUsd, signedIn, positions } = usePortfolio();
   const demo = useDemo();
   const journal = useJournal();
   const session = useOptionalSession();
@@ -79,12 +79,16 @@ export default function TradeTicketScreen() {
     takerFeeRate: market.takerFeeRate,
   });
   const liveNeeded = requiredCollateralUsd(riskUsd, kUsed, market);
+  // Perpl's minimum for opening an account or topping up is $10 (verified 2026-10-14).
+  const liveToMove = liveNeeded > readyOnPerplUsd ? Math.max(liveNeeded - readyOnPerplUsd, 10) : 0;
   const affordable =
-    mode === 'demo'
-      ? riskUsd + t.openFee <= balances.pocketUsd
-      : liveNeeded <= balances.pocketUsd + readyOnPerplUsd;
+    mode === 'demo' ? riskUsd + t.openFee <= balances.pocketUsd : liveToMove <= balances.pocketUsd;
   const needsGas = mode === 'live' && signedIn && balances.mon <= 0;
-  const valid = canTrade && riskUsd >= 1 && affordable && !needsGas && step === null;
+  // Perpl merges same-market orders into one position; keep one live trade per market so the
+  // max-loss numbers stay exact (POCKET.md §2).
+  const alreadyOpen = mode === 'live' && positions.some((p) => p.symbol === market.symbol);
+  const valid = canTrade && riskUsd >= 1 && affordable && !needsGas && !alreadyOpen;
+  const canSubmit = valid && step === null;
   const dirWord = side === 'long' ? 'falls' : 'rises';
   const movePct = side === 'long' ? -t.autoCloseMovePct : t.autoCloseMovePct;
 
@@ -158,7 +162,7 @@ export default function TradeTicketScreen() {
           <HoldButton
             label={step ? 'Working…' : 'Hold to trade'}
             variant={side === 'long' ? 'up' : 'down'}
-            disabled={!valid}
+            disabled={!canSubmit}
             onComplete={onConfirm}
           />
         </View>
@@ -230,11 +234,11 @@ export default function TradeTicketScreen() {
             <Text className="font-inter text-sm text-typography-500">
               Fee to open: {formatUsd(t.openFee)}
             </Text>
-            {mode === 'live' && liveNeeded > readyOnPerplUsd && (
+            {mode === 'live' && liveToMove > 0 && (
               <Text className="font-inter text-xs text-typography-500">
-                Pocket moves {formatUsd(Math.max(liveNeeded - readyOnPerplUsd, 10))} to your Perpl
-                trading account (Perpl&apos;s minimum is $10). Only {formatUsd(riskUsd)} is at risk;
-                the rest stays free and comes back when you close.
+                Pocket moves {formatUsd(liveToMove)} to your Perpl trading account (Perpl&apos;s
+                minimum is $10). Only {formatUsd(riskUsd)} is at risk; the rest stays free and comes
+                back when you close.
               </Text>
             )}
           </>
@@ -248,7 +252,9 @@ export default function TradeTicketScreen() {
                   ? 'You need a little MON for network fees. Add some on the Add dollars screen.'
                   : riskUsd < 1
                     ? 'Enter at least $1 to see your trade.'
-                    : `Not enough in your Pocket — you have ${formatUsd(balances.pocketUsd + readyOnPerplUsd)}.`}
+                    : mode === 'live'
+                      ? `This needs ${formatUsd(liveToMove)} in your Pocket (Perpl’s $10 minimum) — you have ${formatUsd(balances.pocketUsd)}.`
+                      : `Not enough in your Pocket — you have ${formatUsd(balances.pocketUsd)}.`}
           </Text>
         )}
       </View>
