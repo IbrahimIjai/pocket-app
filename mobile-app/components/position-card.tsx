@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Money } from '@/components/money';
+import { AssetBadge } from '@/components/market-row';
 import { RiskMeter } from '@/components/risk-meter';
 import { Text } from '@/components/ui/text';
 import { formatUsd } from '@/lib/format';
@@ -26,6 +27,7 @@ export function PositionCard({
       onPress={onPress}
       className="gap-3 rounded-3xl border border-outline-200 bg-background-50 p-4 active:opacity-80">
       <View className="flex-row items-center gap-2">
+        <AssetBadge symbol={position.symbol} size={24} />
         <Text className="font-inter-semibold text-base text-typography-900">{position.symbol}</Text>
         <View
           className={`flex-row items-center gap-1 rounded-full px-2 py-0.5 ${up ? 'bg-pocket-mint/15' : 'bg-pocket-coral/15'}`}>

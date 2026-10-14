@@ -6,6 +6,7 @@ import { Screen } from '@/components/screen';
 import { PriceChart } from '@/components/price-chart';
 import { PocketButton } from '@/components/pocket-button';
 import { Chip } from '@/components/chip';
+import { AssetBadge } from '@/components/market-row';
 import { Text } from '@/components/ui/text';
 import { formatPct, formatPrice } from '@/lib/format';
 import { TIMEFRAMES, type Timeframe } from '@/lib/perpl/market-data';
@@ -66,6 +67,7 @@ export default function MarketScreen() {
         </View>
       }>
       <View className="gap-1 pt-2">
+        <AssetBadge symbol={market.symbol} size={36} />
         <Text
           className="font-inter-bold text-4xl text-typography-900"
           style={{ fontVariant: ['tabular-nums'] }}>

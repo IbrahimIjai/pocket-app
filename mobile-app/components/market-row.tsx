@@ -1,13 +1,26 @@
-import { Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Text } from '@/components/ui/text';
 import { formatPct, formatPrice } from '@/lib/format';
+import { tokenLogo } from '@/lib/token-logos';
 import type { Market } from '@/lib/types';
 import { useTheme } from '@/hooks/useTheme';
 
-export function AssetBadge({ symbol }: { symbol: string }) {
+export function AssetBadge({ symbol, size = 40 }: { symbol: string; size?: number }) {
+  const logo = tokenLogo(symbol);
+  if (logo) {
+    return (
+      <Image
+        source={logo}
+        accessibilityLabel={symbol}
+        style={{ width: size, height: size, borderRadius: size / 2 }}
+      />
+    );
+  }
   return (
-    <View className="h-10 w-10 items-center justify-center rounded-full bg-background-100">
+    <View
+      className="items-center justify-center rounded-full bg-background-100"
+      style={{ width: size, height: size }}>
       <Text className="font-inter-bold text-xs text-typography-900">{symbol}</Text>
     </View>
   );
