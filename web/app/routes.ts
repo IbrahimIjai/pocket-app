@@ -4,4 +4,6 @@ export default [
   index("routes/home.tsx"),
   route("videos/:slug", "routes/video.tsx"),
   route("dashboard", "routes/dashboard.tsx"),
+  route("api/aurora/deposit", "routes/api.aurora.deposit.ts"),
+  route("api/aurora/status", "routes/api.aurora.status.ts"),
 ] satisfies RouteConfig
