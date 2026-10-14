@@ -16,7 +16,7 @@
         "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
         "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
         "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
-        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
+        "EXPO_PUBLIC_RP_ID": "pocket-app-web.vercel.app"
       },
       "android": {
         "buildType": "apk",
@@ -34,7 +34,7 @@
         "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
         "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
         "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
-        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
+        "EXPO_PUBLIC_RP_ID": "pocket-app-web.vercel.app"
       },
       "android": {
         "buildType": "apk"
@@ -51,7 +51,7 @@
         "EXPO_PUBLIC_PERPL_WS_URL": "wss://app.perpl.xyz",
         "EXPO_PUBLIC_PERPL_EXCHANGE": "0x34B6552d57a35a1D042CcAe1951BD1C370112a6F",
         "EXPO_PUBLIC_AUSD": "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
-        "EXPO_PUBLIC_RP_ID": "0xmegie.github.io"
+        "EXPO_PUBLIC_RP_ID": "pocket-app-web.vercel.app"
       },
       "android": {
         "buildType": "apk"

@@ -23,7 +23,7 @@ eas build --platform android --profile development
 bunx expo start                 # then open the installed "Pocket Dev" app
 ```
 
-Passkeys are bound to the rpId `0xmegie.github.io`, which serves `/.well-known/assetlinks.json` for each signing certificate (see `scripts/README.md`).
+Passkeys are bound to the rpId `pocket-app-web.vercel.app`, which serves `/.well-known/assetlinks.json` for each signing certificate (see `scripts/README.md`).
 
 ## Layout
 
