@@ -88,6 +88,7 @@ function RootLayoutNav() {
                       name="add-any-chain"
                       options={{ animation: 'slide_from_right' }}
                     />
+                    <Stack.Screen name="swap" options={{ animation: 'slide_from_right' }} />
                     <Stack.Screen
                       name="market/[symbol]"
                       options={{ animation: 'slide_from_right' }}

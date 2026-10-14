@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import { Screen } from '@/components/screen';
@@ -98,6 +98,19 @@ export default function MarketScreen() {
           <Chip key={t} label={t} selected={tf === t} onPress={() => setTf(t)} />
         ))}
       </View>
+
+      {market.symbol === 'MON' && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push({ pathname: '/swap', params: { from: 'AUSD', to: 'MON' } })}
+          className="mt-6 flex-row items-center gap-2 rounded-2xl border border-pocket-violet/40 bg-background-50 p-4 active:opacity-80">
+          <Feather name="shopping-bag" size={16} color={theme.brand.violet} />
+          <Text className="flex-1 font-inter-medium text-sm text-typography-900">
+            Just want to own MON? Buy it spot on Kuru
+          </Text>
+          <Feather name="chevron-right" size={16} color={theme.muted} />
+        </Pressable>
+      )}
 
       <View className="mt-6 flex-row items-center gap-2 rounded-2xl border border-outline-200 bg-background-50 p-4">
         <Feather name="clock" size={16} color={theme.muted} />

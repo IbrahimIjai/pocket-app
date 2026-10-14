@@ -106,13 +106,22 @@ export default function HomeScreen() {
       )}
 
       {mode === 'live' && signedIn && (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/add')}
-          className="mt-5 h-11 flex-row items-center justify-center gap-2 self-start rounded-full border border-outline-200 bg-background-50 px-5 active:opacity-80">
-          <Feather name="plus" size={16} color={theme.text} />
-          <Text className="font-inter-semibold text-sm text-typography-900">Add dollars</Text>
-        </Pressable>
+        <View className="mt-5 flex-row gap-2">
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/add')}
+            className="h-11 flex-row items-center justify-center gap-2 self-start rounded-full border border-outline-200 bg-background-50 px-5 active:opacity-80">
+            <Feather name="plus" size={16} color={theme.text} />
+            <Text className="font-inter-semibold text-sm text-typography-900">Add dollars</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/swap')}
+            className="h-11 flex-row items-center justify-center gap-2 self-start rounded-full border border-outline-200 bg-background-50 px-5 active:opacity-80">
+            <Feather name="shopping-bag" size={16} color={theme.text} />
+            <Text className="font-inter-semibold text-sm text-typography-900">Buy</Text>
+          </Pressable>
+        </View>
       )}
 
       {priced.length === 0 && (mode === 'demo' || signedIn) && (

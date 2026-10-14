@@ -91,6 +91,27 @@ export default function AddDollarsScreen() {
         </Text>
       </View>
 
+      {((live.data?.usdcUsd ?? 0) >= 1 || mon < 0.5) && (
+        <View className="mt-3 gap-2">
+          {(live.data?.usdcUsd ?? 0) >= 1 && (
+            <SwapLink
+              label={`Convert ${formatUsd(live.data!.usdcUsd)} USDC to AUSD`}
+              onPress={() =>
+                router.push({ pathname: '/swap', params: { from: 'USDC', to: 'AUSD' } })
+              }
+            />
+          )}
+          {mon < 0.5 && ausd >= 1 && (
+            <SwapLink
+              label="Get MON for network fees"
+              onPress={() =>
+                router.push({ pathname: '/swap', params: { from: 'AUSD', to: 'MON' } })
+              }
+            />
+          )}
+        </View>
+      )}
+
       <View className="mt-6 flex-row items-center justify-center gap-2">
         {funded ? (
           <Feather name="check-circle" size={16} color={theme.brand.mint} />
@@ -119,5 +140,19 @@ function BalanceRow({ label, value }: { label: string; value: string }) {
         {value}
       </Text>
     </View>
+  );
+}
+
+function SwapLink({ label, onPress }: { label: string; onPress: () => void }) {
+  const theme = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      className="flex-row items-center gap-2 rounded-2xl border border-pocket-violet/40 bg-background-50 px-4 py-3 active:opacity-80">
+      <Feather name="repeat" size={16} color={theme.brand.violet} />
+      <Text className="flex-1 font-inter-medium text-sm text-typography-900">{label}</Text>
+      <Text className="font-inter text-xs text-typography-500">via Kuru</Text>
+    </Pressable>
   );
 }
