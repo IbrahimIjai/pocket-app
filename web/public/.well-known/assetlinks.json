@@ -10,5 +10,17 @@
         "4C:BC:6B:C6:08:53:7A:51:C1:72:CF:2D:92:7E:B7:C3:CB:A5:7B:BC:40:7E:3F:78:D3:6C:C2:22:15:E3:65:08"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pocket.preview",
+      "sha256_cert_fingerprints": [
+        "34:8A:5E:57:F4:B8:7C:D0:29:67:8E:BE:3B:FE:90:DC:A5:8F:B7:A6:3F:E7:D8:7A:30:85:66:6B:75:A3:64:3F"
+      ]
+    }
   }
 ]
