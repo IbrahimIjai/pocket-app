@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
-    background-color: #0f1115;
-    color: #f5f3ec;
+    color-scheme: light dark;
+    background-color: #f5f3ec;
+    color: #0f1115;
     font-family: Inter_400Regular, Inter, sans-serif;
   }
 
@@ -14,6 +14,16 @@
   body,
   #root {
     min-height: 100%;
-    background-color: #0f1115;
+    background-color: #f5f3ec;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root,
+    html,
+    body,
+    #root {
+      background-color: #0f1115;
+      color: #f5f3ec;
+    }
   }
 }

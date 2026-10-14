@@ -1,6 +1,6 @@
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { colors } from '@/theme/brand';
+import { colors, themes } from '@/theme/brand';
 import { useFonts } from 'expo-font';
 import * as Splash from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -13,6 +13,7 @@ import {
 
 import '../global.css';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -44,19 +45,22 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const mode = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const theme = themes[mode];
+  const navigationTheme = mode === 'dark' ? DarkTheme : DefaultTheme;
   return (
-    <GluestackUIProvider mode="dark">
-      <StatusBar style="light" />
+    <GluestackUIProvider mode="system">
+      <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
       <ThemeProvider
         value={{
-          ...DarkTheme,
+          ...navigationTheme,
           colors: {
-            ...DarkTheme.colors,
+            ...navigationTheme.colors,
             primary: colors.mint,
-            background: colors.ink,
-            card: colors.surface,
-            text: colors.paper,
-            border: colors.border,
+            background: theme.background,
+            card: theme.surface,
+            text: theme.text,
+            border: theme.border,
             notification: colors.coral,
           },
         }}>
@@ -64,10 +68,22 @@ function RootLayoutNav() {
           screenOptions={{
             headerShown: false,
             animation: 'fade',
-            contentStyle: { backgroundColor: colors.ink },
+            contentStyle: { backgroundColor: theme.background },
           }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="welcome" />
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="add" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="market/[symbol]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen
+            name="trade/[symbol]"
+            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+          />
+          <Stack.Screen name="position/[id]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen
+            name="receipt/[id]"
+            options={{ animation: 'fade', gestureEnabled: false }}
+          />
         </Stack>
       </ThemeProvider>
     </GluestackUIProvider>

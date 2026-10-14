@@ -4,7 +4,8 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import Feather from '@expo/vector-icons/Feather';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Text } from '@/components/ui/text';
-import { colors } from '@/theme/brand';
+import { colors, themes } from '@/theme/brand';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 const BAR_PADDING = 6;
 const SPRING = { damping: 18, stiffness: 220, mass: 0.8 };
@@ -13,7 +14,8 @@ type FeatherName = keyof typeof Feather.glyphMap;
 
 const ICONS: Record<string, FeatherName> = {
   home: 'home',
-  about: 'info',
+  activity: 'activity',
+  you: 'user',
 };
 
 export function FloatingTabBar({ state, descriptors, navigation, insets }: BottomTabBarProps) {
@@ -37,7 +39,7 @@ export function FloatingTabBar({ state, descriptors, navigation, insets }: Botto
       style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
       <View
         onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}
-        className="w-[64%] flex-row rounded-full border border-pocket-border bg-pocket-surface"
+        className="w-[88%] max-w-[380px] flex-row rounded-full border border-outline-200 bg-background-50"
         style={{
           padding: BAR_PADDING,
           shadowColor: '#000',
@@ -99,6 +101,7 @@ function TabButton({
   onPress: () => void;
   onLongPress: () => void;
 }) {
+  const mode = useColorScheme() === 'dark' ? 'dark' : 'light';
   const scale = useSharedValue(focused ? 1 : 0.92);
 
   useEffect(() => {
@@ -120,9 +123,9 @@ function TabButton({
       <Animated.View
         className="flex-row items-center justify-center gap-2 py-3"
         style={animatedStyle}>
-        <Feather name={icon} size={18} color={focused ? colors.ink : colors.muted} />
+        <Feather name={icon} size={18} color={focused ? colors.ink : themes[mode].muted} />
         <Text
-          className={`font-inter-medium text-sm ${focused ? 'text-pocket-ink' : 'text-pocket-muted'}`}>
+          className={`font-inter-medium text-sm ${focused ? 'text-pocket-ink' : 'text-typography-500'}`}>
           {label}
         </Text>
       </Animated.View>

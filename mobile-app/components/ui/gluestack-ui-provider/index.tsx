@@ -1,32 +1,35 @@
 import React from 'react';
-import { config } from './config';
-import { View } from 'react-native';
-import { colors } from '@/theme/brand';
+import { View, type ViewProps } from 'react-native';
 import { OverlayProvider } from '@gluestack-ui/overlay';
 import { ToastProvider } from '@gluestack-ui/toast';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { themes } from '@/theme/brand';
+import { config } from './config';
 
 export function GluestackUIProvider({
-  mode = 'dark',
+  mode = 'system',
+  style,
+  children,
   ...props
-}: {
-  mode?: 'light' | 'dark';
-  children?: any;
-}) {
+}: ViewProps & { mode?: 'system' | 'light' | 'dark' }) {
+  const systemMode = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const resolvedMode = mode === 'system' ? systemMode : mode;
+
   return (
     <View
+      {...props}
       style={[
-        config[mode],
+        config[resolvedMode],
         {
           flex: 1,
           height: '100%',
           width: '100%',
-          backgroundColor: mode === 'dark' ? colors.ink : colors.paper,
+          backgroundColor: themes[resolvedMode].background,
         },
-        // @ts-ignore
-        props.style,
+        style,
       ]}>
       <OverlayProvider>
-        <ToastProvider>{props.children}</ToastProvider>
+        <ToastProvider>{children}</ToastProvider>
       </OverlayProvider>
     </View>
   );

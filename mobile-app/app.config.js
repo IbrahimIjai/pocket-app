@@ -14,7 +14,7 @@ module.exports = {
   slug: 'pocket',
   version: '1.0.0',
   description: 'Trade in dollars. Never lose more than you chose.',
-  backgroundColor: colors.ink,
+  backgroundColor: colors.paper,
   scheme: IS_DEV ? 'pocket-dev' : IS_PREVIEW ? 'pocket-preview' : 'pocket',
   experiments: {
     tsconfigPaths: true,
@@ -31,7 +31,8 @@ module.exports = {
         image: './assets/splash-icon.png',
         imageWidth: 200,
         resizeMode: 'contain',
-        backgroundColor: colors.ink,
+        backgroundColor: colors.paper,
+        dark: { image: './assets/splash-icon.png', backgroundColor: colors.ink },
       },
     ],
     'expo-status-bar',
@@ -39,7 +40,7 @@ module.exports = {
   ],
   orientation: 'portrait',
   icon: './assets/icon.png',
-  userInterfaceStyle: 'dark',
+  userInterfaceStyle: 'automatic',
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
@@ -59,8 +60,8 @@ module.exports = {
     favicon: './assets/favicon.png',
     name: 'Pocket',
     shortName: 'Pocket',
-    themeColor: colors.ink,
-    backgroundColor: colors.ink,
+    themeColor: colors.paper,
+    backgroundColor: colors.paper,
   },
   extra: {
     variant,

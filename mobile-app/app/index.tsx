@@ -9,12 +9,12 @@ export default function SplashRoute() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => router.replace('/home'), SPLASH_DURATION_MS);
+    const timer = setTimeout(() => router.replace('/welcome'), SPLASH_DURATION_MS);
     return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-pocket-ink">
+    <View className="flex-1 items-center justify-center bg-background-0">
       <Image
         source={require('../assets/splash-icon.png')}
         accessibilityLabel="Pocket"

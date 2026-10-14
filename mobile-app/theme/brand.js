@@ -11,4 +11,20 @@ module.exports = {
     border: '#2A2D35',
     muted: '#9AA0AA',
   },
+  themes: {
+    light: {
+      background: '#F5F3EC',
+      surface: '#EAE7DF',
+      text: '#0F1115',
+      border: '#D6D3CB',
+      muted: '#666B75',
+    },
+    dark: {
+      background: '#0F1115',
+      surface: '#171A21',
+      text: '#F5F3EC',
+      border: '#2A2D35',
+      muted: '#9AA0AA',
+    },
+  },
 };
